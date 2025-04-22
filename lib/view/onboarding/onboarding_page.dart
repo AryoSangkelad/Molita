@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:molita_flutter/Viewmodels/onboarding_viewmodel.dart';
+
 import 'package:provider/provider.dart';
-import '../../Viewmodels/onboarding_viewmodel.dart';
+
 import 'widgets/onboarding_item.dart';
 
 class OnboardingPage extends StatelessWidget {
@@ -63,7 +65,7 @@ class OnboardingPage extends StatelessWidget {
                         ),
                         onPressed: () {
                           if (viewModel.currentIndex == list.length - 1) {
-                            Navigator.pushReplacementNamed(context, "/home"); // Ganti ke screen utama
+                            Navigator.pushReplacementNamed(context, "/login"); // Ganti ke screen utama
                           } else {
                             viewModel.nextPage(_controller);
                           }

@@ -62,11 +62,14 @@ flutter:
   fonts:
     - family: OleoScript
       fonts:
-        - asset: assets/font/OleoScript-Regular.ttf
-        - asset: assets/font/OleoScript-Bold.ttf
+        - asset: assets/font/oleo/OleoScript-Regular.ttf
+        - asset: assets/font/oleo/OleoScript-Bold.ttf
           weight: 700
-
-
+    - family: PassionOne
+      fonts:
+        - asset: assets/font/passionone/PassionOne-Regular.ttf
+        - asset: assets/font/passionone/PassionOne-Bold.ttf
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:

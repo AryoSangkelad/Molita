@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../models/onboarding_model.dart';
+import 'package:molita_flutter/models/onboarding_model.dart';
+
 
 class OnboardingViewModel extends ChangeNotifier {
   int _currentIndex = 0;

@@ -1,5 +1,9 @@
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../models/onboarding_model.dart';
+import 'package:molita_flutter/models/onboarding_model.dart';
+
+ //
 
 class OnboardingItem extends StatelessWidget {
   final OnboardingModel model;
