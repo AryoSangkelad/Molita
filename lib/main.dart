@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:molita_flutter/View/login/login_page.dart';
-import 'package:molita_flutter/View/onboarding/onboarding_page.dart';
-import 'package:molita_flutter/View/onboarding/splash_screen.dart';
-import 'package:molita_flutter/View/register/register_page.dart';
-import 'package:molita_flutter/view/dashboard/dashboard_page.dart';
-import 'package:molita_flutter/viewmodels/dashboard_viewmodel.dart';
+import 'package:molita_flutter/core/routes/app_router.dart';
+import 'package:molita_flutter/viewmodels/common/onboarding_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/common/login_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/menu_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/common/register_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:molita_flutter/viewmodels/login_viewmodel.dart';
-import 'package:molita_flutter/viewmodels/register_viewmodel.dart';
-
 
 void main() {
   runApp(const MolitaApp());
@@ -22,21 +19,16 @@ class MolitaApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
+        ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
         ChangeNotifierProvider(create: (_) => RegisterViewModel()),
         ChangeNotifierProvider(create: (_) => DashboardViewModel()),
-
+        ChangeNotifierProvider(create: (_) => MenuViewModel()),
       ],
       child: MaterialApp(
         title: 'Molita',
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
-        routes: {
-          '/': (context) => const SplashScreen(),
-          '/onboarding': (context) => OnboardingPage(),
-          '/login': (context) => LoginPage(),
-          '/register': (context) => RegisterPage(),
-          '/home': (context) => DashboardPage(),
-        },
+        routes: AppRoutes.routes,
       ),
     );
   }
