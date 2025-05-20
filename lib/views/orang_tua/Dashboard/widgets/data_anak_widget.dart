@@ -1,87 +1,130 @@
 import 'package:flutter/material.dart';
-import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
 import 'package:molita_flutter/views/orang_tua/Dashboard/widgets/build_chip_widget.dart';
 
-Widget buildDataAnak(DashboardViewModel viewModel) {
+class DummyChild {
+  final String nama;
+  final String tanggalLahir;
+  final String jenisKelamin;
+  final double beratBadan;
+  final double tinggiBadan;
+  final double lingkarKepala;
+
+  DummyChild({
+    required this.nama,
+    required this.tanggalLahir,
+    required this.jenisKelamin,
+    required this.beratBadan,
+    required this.tinggiBadan,
+    required this.lingkarKepala,
+  });
+}
+
+Widget buildDataAnak(BuildContext context) {
+  final List<DummyChild> dummyChildren = [
+    DummyChild(
+      nama: "Aldi",
+      tanggalLahir: "12-06-2020",
+      jenisKelamin: "Laki-Laki",
+      beratBadan: 15.2,
+      tinggiBadan: 98.5,
+      lingkarKepala: 47.0,
+    ),
+    DummyChild(
+      nama: "Bella",
+      tanggalLahir: "25 Agustus 2021",
+      jenisKelamin: "Perempuan",
+      beratBadan: 12.8,
+      tinggiBadan: 90.3,
+      lingkarKepala: 45.5,
+    ),
+  ];
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+      const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
         child: Text(
           "Data Anak",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            letterSpacing: 0.5,
+          ),
         ),
       ),
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+      const SizedBox(height: 12),
+      SizedBox(
+        height: MediaQuery.of(context).size.height * 0.15,
+        child: ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           scrollDirection: Axis.horizontal,
-          child: Row(
-            children:
-                viewModel.children
-                    .map(
-                      (child) => Container(
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        width: 280,
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      child.nama,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                    Icon(
-                                      Icons.child_care,
-                                      color: Color(0xFF1976D2),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 8),
-                                Text("Tanggal Lahir: ${child.tanggalLahir}"),
-                                Text("Imunisasi: ${child.imunisasi}"),
-                                SizedBox(height: 12),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    buildChip(
-                                      "${child.beratBadan} kg",
-                                      Colors.green,
-                                    ),
-                                    buildChip(
-                                      "${child.tinggiBadan} cm",
-                                      Colors.blue,
-                                    ),
-                                    buildChip(
-                                      "${child.lingkarKepala} cm",
-                                      Colors.pink,
-                                    ),
-                                  ],
-                                ),
-                              ],
+          separatorBuilder: (_, __) => const SizedBox(width: 16),
+          itemCount: dummyChildren.length,
+          itemBuilder: (context, index) {
+            final child = dummyChildren[index];
+            final isMale = child.jenisKelamin == "Laki-Laki";
+            final genderColor =
+                isMale ? Colors.blue.shade600 : Colors.pink.shade600;
+
+            return Container(
+              width: MediaQuery.of(context).size.width * 0.75,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            child.nama,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
-                      ),
-                    )
-                    .toList(),
-          ),
+                        Icon(Icons.child_care, color: genderColor, size: 28),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Lahir: ${child.tanggalLahir}",
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 13,
+                          ),
+                        ),
+
+                        // Gender Chip
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12, bottom: 8),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: buildChip(
+                              isMale ? "Laki-laki" : "Perempuan",
+                              genderColor,
+                              icon: isMale ? Icons.male : Icons.female,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     ],
