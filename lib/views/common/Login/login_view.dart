@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:molita_flutter/core/constants/colors_constant.dart';
 import 'package:molita_flutter/viewmodels/common/login_viewmodel.dart';
@@ -23,6 +24,7 @@ class LoginView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -45,7 +47,7 @@ class LoginView extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Email
+                // Email TextField
                 TextField(
                   controller: loginViewModel.emailorUsernameController,
                   decoration: InputDecoration(
@@ -61,7 +63,7 @@ class LoginView extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Password
+                // Password TextField
                 TextField(
                   controller: loginViewModel.passwordController,
                   obscureText: true,
@@ -104,12 +106,33 @@ class LoginView extends StatelessWidget {
                                 loginViewModel.emailorUsernameController.text,
                                 loginViewModel.passwordController.text,
                               );
-                              if (loginViewModel.orangTua != null) {
-                                Navigator.pushNamed(
-                                  context,
-                                  '/home',
-                                  arguments: loginViewModel.orangTua,
-                                );
+
+                              if (loginViewModel.errorMessage != null) {
+                                Flushbar(
+                                  message: loginViewModel.errorMessage!,
+                                  backgroundColor: Colors.red[400]!,
+                                  margin: EdgeInsets.all(16),
+                                  borderRadius: BorderRadius.circular(12),
+                                  duration: Duration(seconds: 3),
+                                  flushbarPosition:
+                                      FlushbarPosition.TOP, 
+                                  icon: Icon(
+                                    Icons.error_outline,
+                                    color: Colors.white,
+                                  ),
+                                ).show(context);
+                              } else {
+                                if (loginViewModel.role == 'orang_tua') {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/orang_tua',
+                                  );
+                                } else if (loginViewModel.role == 'admin') {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/admin',
+                                  );
+                                }
                               }
                             },
                     style: ElevatedButton.styleFrom(
@@ -120,48 +143,23 @@ class LoginView extends StatelessWidget {
                       ),
                       elevation: 2,
                     ),
-                    child: const Text(
-                      "Masuk",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Belum daftar akun? ",
-                      style: TextStyle(color: Colors.blue),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/register');
-                      },
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size(0, 0),
-                      ),
-                      child: const Text(
-                        "Daftar",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 32),
-                const Text(
-                  '“ Pantau tumbuh kembang buah hati\n  dengan cinta dan teknologi ”',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontStyle: FontStyle.italic,
-                    color: Colors.indigo,
-                    fontSize: 14,
+                    child:
+                        loginViewModel.isLoading
+                            ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : const Text(
+                              "Masuk",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                   ),
                 ),
               ],

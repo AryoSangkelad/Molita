@@ -1,67 +1,86 @@
 import 'package:flutter/material.dart';
 
-Widget buildHeader(BuildContext context, String name) {
+Widget buildHeader(BuildContext context, String username) {
+  final screenHeight = MediaQuery.of(context).size.height;
+  final headerHeight = screenHeight * 0.25; // 25% dari tinggi layar
+  final circleSize = headerHeight * 0.8; // ukuran lingkaran proporsional
+
   return Container(
-    padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+    height: headerHeight,
+    width: double.infinity,
     decoration: const BoxDecoration(
-      color: Color(0xFF1976D2),
-      borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(24),
-        bottomRight: Radius.circular(24),
+      color: Colors.blueAccent,
+      borderRadius: const BorderRadius.only(
+        bottomLeft: Radius.circular(15),
+        bottomRight: Radius.circular(15),
       ),
     ),
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: "Hai, ",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                TextSpan(
-                  text: "$name!",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.yellow[200],
-                  ),
-                ),
-              ],
+    child: Stack(
+      children: [
+        // Background hiasan lingkaran transparan
+        Positioned(
+          top: -circleSize * 0.5,
+          left: -circleSize * 0.5,
+          child: Container(
+            width: circleSize,
+            height: circleSize,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withOpacity(0.1),
             ),
           ),
-          Text(
-            "Yuk, pastikan kesehatan anak terjamin!",
-            style: TextStyle(color: Colors.white, fontSize: 14),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            left: 24,
+            right: 24,
+            bottom: headerHeight * 0.55,
           ),
-          SizedBox(height: 16),
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Cari informasi atau layanan...',
-              hintStyle: TextStyle(color: Colors.white60),
-              filled: true,
-              fillColor: Colors.white.withOpacity(0.2),
-              prefixIcon: Icon(Icons.search, color: Colors.white),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // Teks sambutan
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    "Hai, $username",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    "Yuk pastikan kesehatan anak terjamin!",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                ],
               ),
-              contentPadding: EdgeInsets.symmetric(
-                vertical: 12,
-                horizontal: 16,
+
+              // Avatar pengguna
+              const CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.white,
+                child: CircleAvatar(
+                  radius: 26,
+                  backgroundImage: AssetImage(
+                    'assets/images/avatar.png',
+                  ), // ganti jika belum ada
+                ),
               ),
-            ),
-            style: TextStyle(color: Colors.white),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
 }

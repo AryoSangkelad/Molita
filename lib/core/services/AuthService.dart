@@ -1,23 +1,34 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:molita_flutter/core/constants/api_constant.dart';
-import 'package:molita_flutter/models/orang_tua/orang_tua_model.dart';
 
 class AuthService {
-  Future<OrangTua?> login(String emailOrUsername, String password) async {
-    final response = await http.post(
-      Uri.parse('${ApiConstant.baseUrl}/orang-tua/login'),
-      body: {'email_or_username': emailOrUsername, 'password': password},
-    );
+  Future<Map<String, dynamic>> login(
+    String emailOrUsername,
+    String password,
+  ) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${ApiConstant.baseUrlApi}/login'),
+        body: {'email_or_username': emailOrUsername, 'password': password},
+      );
 
-    if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      final orangTua = OrangTua.fromJson(body['data']);
-      print("AMANANNANANA");
-      return orangTua;
-    } else {
-      throw Exception(jsonDecode(response.body)['message']);
+
+      if (response.statusCode == 200 &&
+          body['role'] != null &&
+          body['data'] != null) {
+        return {
+          'success': true,
+          'role': body['role'],
+          'message': body['message'],
+          'data': body['data'], // penting: untuk disimpan ke SharedPreferences
+        };
+      } else {
+        return {'success': false, 'message': body['message'] ?? 'Login gagal'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Terjadi kesalahan koneksi.'};
     }
   }
 }

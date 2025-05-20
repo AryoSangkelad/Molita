@@ -1,60 +1,88 @@
 import 'package:flutter/material.dart';
 
-Widget buildJadwalPosyandu() {
-  return Padding(
-    padding: const EdgeInsets.all(16),
-    child: Material(
-      elevation: 4,
-      borderRadius: BorderRadius.circular(16),
-      color: const Color(0xFF2196F3),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF1976D2), Color(0xFF2196F3)],
+Widget buildJadwalPosyandu(BuildContext context) {
+  final primaryColor = Theme.of(context).colorScheme.primary;
+
+  return Card(
+    elevation: 4,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                shape: const StadiumBorder(),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 10,
+                ),
+                textStyle: const TextStyle(fontSize: 16),
+              ),
+              child: const Text(
+                'Pemeriksaan Balita',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.local_hospital, color: Colors.white),
-                SizedBox(width: 12),
-                Text(
-                  "Posyandu Melati 29",
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              Icon(Icons.add_box_outlined, color: primaryColor),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Posyandu Melati 29',
                   style: TextStyle(
-                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
+                    color: primaryColor,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ],
-            ),
-            SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(Icons.calendar_today, color: Colors.white),
-                SizedBox(width: 12),
-                Text(
-                  "Senin, 2 Desember 2024",
-                  style: TextStyle(color: Colors.white),
+              ),
+              const SizedBox(width: 8),
+              Icon(Icons.calendar_today, color: primaryColor),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  'Senin, 2 Desember 2024',
+                  style: TextStyle(color: primaryColor, fontSize: 14),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ],
-            ),
-            SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(Icons.access_time, color: Colors.white),
-                SizedBox(width: 12),
-                Text("08:10 - 10:30", style: TextStyle(color: Colors.white)),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Icon(Icons.location_on, color: primaryColor),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Jl. Mawar No. 12, Kota Bandung',
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: 14,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(Icons.access_time, color: primaryColor),
+              const SizedBox(width: 4),
+              const Text('08.10 - 10.30', style: TextStyle(fontSize: 14)),
+            ],
+          ),
+        ],
       ),
     ),
   );
