@@ -73,6 +73,7 @@ Widget _buildFormattedText(String text, bool isUser) {
             style: TextStyle(
               color: isUser ? Colors.grey[800] : Colors.grey[900],
               height: 1.5,
+              fontFamilyFallback: ['NotoColorEmoji', 'Segoe UI Emoji'],
             ),
           ),
         );

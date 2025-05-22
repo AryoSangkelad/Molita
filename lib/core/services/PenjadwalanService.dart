@@ -104,4 +104,38 @@ class PenjadwalanService {
       throw Exception('Gagal mengambil data jadwal posyandu');
     }
   }
+
+  Future<JadwalPosyandu> getJadwalTerdekat(String idJenis) async {
+    final url = Uri.parse('${ApiConstant.baseUrlApi}/jadwal-terdekat/$idJenis');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final item = data['data'];
+
+      // Jika kamu ingin ambil juga alamat dari jenis_posyandu
+      String? alamat = data['jenis_posyandu']?['alamat'];
+
+      var waktuMulai = item['jam_mulai'].split(":");
+      var waktuSelesai = item['jam_selesai'].split(":");
+
+      return JadwalPosyandu(
+        id: item['id_jadwal_posyandu'],
+        kegiatan: item['kegiatan'],
+        tanggal: DateTime.parse(item['tanggal']),
+        jamMulai: TimeOfDay(
+          hour: int.parse(waktuMulai[0]),
+          minute: int.parse(waktuMulai[1]),
+        ),
+        jamSelesai: TimeOfDay(
+          hour: int.parse(waktuSelesai[0]),
+          minute: int.parse(waktuSelesai[1]),
+        ),
+        catatan: item['catatan'],
+        lokasi: alamat ?? '-', // fallback kalau data tidak tersedia
+      );
+    } else {
+      throw Exception('Gagal mengambil jadwal posyandu terdekat');
+    }
+  }
 }

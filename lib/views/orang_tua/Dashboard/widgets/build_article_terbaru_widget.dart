@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:molita_flutter/core/constants/api_constant.dart';
-import 'package:molita_flutter/viewmodels/orang_tua/edukasi_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
 import 'package:molita_flutter/views/orang_tua/Edukasi/artikel_detail_screen.dart';
 
-Widget buildArtikelTerbaru(BuildContext context, EdukasiViewModel viewModel) {
+Widget buildArtikelTerbaru(BuildContext context, DashboardViewModel viewModel) {
   final artikelList = viewModel.getArtikelOnly();
 
   return Padding(

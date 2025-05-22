@@ -8,13 +8,17 @@ import 'package:molita_flutter/models/orang_tua/pertumbuhan_model.dart';
 class GrafikView extends StatefulWidget {
   final String userId;
   const GrafikView({Key? key, required this.userId}) : super(key: key);
-
   @override
   State<GrafikView> createState() => _GrafikViewState();
 }
 
 class _GrafikViewState extends State<GrafikView> {
   late PertumbuhanViewModel viewModel;
+
+  // Warna yang lebih kontras untuk pertumbuhan berbeda
+  final Color weightColor = const Color(0xFF4361EE); 
+  final Color heightColor = const Color(0xFF4CAF50); 
+  final Color secondaryColor = const Color(0xFF3F37C9);
 
   @override
   void initState() {
@@ -27,56 +31,37 @@ class _GrafikViewState extends State<GrafikView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
+        backgroundColor: Colors.white,
         title: Text(
           'Grafik Pertumbuhan',
           style: TextStyle(
-            color: Colors.blue[800],
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+            color: weightColor,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
+            letterSpacing: 0.8,
           ),
         ),
         centerTitle: false,
-        automaticallyImplyLeading: false, // Hilangkan tombol back
       ),
       body: Consumer<PertumbuhanViewModel>(
         builder: (context, model, child) {
           if (model.isLoading) {
-            return Center(
-              child: CircularProgressIndicator(color: Colors.blue[800]),
-            );
+            return _buildLoadingState();
           }
-
           if (model.daftarAnak.isEmpty) {
-            return Center(
-              child: Text(
-                "Belum ada data anak",
-                style: TextStyle(color: Colors.grey[600], fontSize: 16),
-              ),
-            );
+            return _buildEmptyState();
           }
-
           return Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Dropdown Pilih Anak
                 _buildAnakDropdown(model),
-
-                SizedBox(height: 16),
-
-                // Tab Grafik
+                const SizedBox(height: 24),
                 _buildGrafikTabs(model),
-
-                SizedBox(height: 16),
-
-                // Grafik
+                const SizedBox(height: 24),
                 Expanded(child: _buildGrafik(model)),
-
-                SizedBox(height: 16),
-
-                // Deskripsi
+                const SizedBox(height: 24),
                 _buildDeskripsi(model),
               ],
             ),
@@ -86,31 +71,105 @@ class _GrafikViewState extends State<GrafikView> {
     );
   }
 
+  Widget _buildLoadingState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(weightColor),
+            strokeWidth: 3,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Memuat data pertumbuhan...',
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.auto_graph_rounded, size: 80, color: Colors.grey[300]),
+          const SizedBox(height: 16),
+          Text(
+            "Belum ada data anak",
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Tambahkan data anak untuk melihat grafik pertumbuhan",
+            style: TextStyle(color: Colors.grey[500], fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAnakDropdown(PertumbuhanViewModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Pilih Anak',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.blue[800],
-            fontSize: 14,
+        Padding(
+          padding: const EdgeInsets.only(left: 4.0),
+          child: Text(
+            'PILIH ANAK',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: weightColor,
+              fontSize: 12,
+              letterSpacing: 0.8,
+            ),
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(8),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          child: DropdownButton<Anak>(
+          child: DropdownButtonFormField<Anak>(
             value: model.selectedAnak,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
+            ),
             isExpanded: true,
-            underline: SizedBox(),
-            icon: Icon(Icons.arrow_drop_down, color: Colors.blue[800]),
-            style: TextStyle(color: Colors.black, fontSize: 14),
+            icon: Icon(Icons.keyboard_arrow_down_rounded, color: weightColor),
+            style: TextStyle(
+              color: Colors.grey[800],
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+            dropdownColor: Colors.white,
             onChanged: (Anak? newValue) {
               if (newValue != null) {
                 model.setSelectedAnak(newValue);
@@ -120,7 +179,13 @@ class _GrafikViewState extends State<GrafikView> {
                 model.daftarAnak.map((anak) {
                   return DropdownMenuItem<Anak>(
                     value: anak,
-                    child: Text(anak.nama),
+                    child: Text(
+                      anak.nama,
+                      style: TextStyle(
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   );
                 }).toList(),
           ),
@@ -131,34 +196,50 @@ class _GrafikViewState extends State<GrafikView> {
 
   Widget _buildGrafikTabs(PertumbuhanViewModel model) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(25),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: const Color.fromARGB(255, 215, 223, 255), // Warna outline
+          width: 1.5, // Ketebalan outline
+        ),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children:
             ['Semua', 'Berat Badan', 'Tinggi Badan'].map((jenis) {
               final bool isSelected = jenis == model.selectedGrafik;
               return Expanded(
-                child: GestureDetector(
-                  onTap: () => model.setSelectedGrafik(jenis),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.blue[100] : Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        jenis,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color:
-                              isSelected ? Colors.blue[800] : Colors.grey[600],
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () => model.setSelectedGrafik(jenis),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isSelected ? weightColor : Colors.transparent,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow:
+                            isSelected
+                                ? [
+                                  BoxShadow(
+                                    color: weightColor.withOpacity(0.2),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ]
+                                : [],
+                      ),
+                      child: Center(
+                        child: Text(
+                          jenis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: isSelected ? Colors.white : Colors.grey[600],
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                     ),
@@ -174,147 +255,288 @@ class _GrafikViewState extends State<GrafikView> {
     final data = model.dataPertumbuhan;
     if (data.isEmpty) {
       return Center(
-        child: Text(
-          'Belum ada data pertumbuhan',
-          style: TextStyle(color: Colors.grey[600]),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.show_chart_rounded, color: Colors.grey[300], size: 60),
+            const SizedBox(height: 8),
+            Text(
+              'Belum ada data pertumbuhan',
+              style: TextStyle(color: Colors.grey[500], fontSize: 14),
+            ),
+          ],
         ),
       );
     }
 
-    return AspectRatio(
-      aspectRatio: 1.7,
-      child: LineChart(
-        LineChartData(
-          lineTouchData: LineTouchData(enabled: true),
-          titlesData: FlTitlesData(
-            show: true,
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: (value, meta) {
-                  // Validasi data
-                  if (data.isEmpty ||
-                      value.toInt() >= data.length ||
-                      value.toInt() < 0) {
-                    return Text(''); // Jika indeks tidak valid
-                  }
-
-                  final tanggal = data[value.toInt()].tanggalPencatatan;
-                  final bulan = _formatBulan(tanggal.month);
-                  final tahun = tanggal.year;
-
-                  return Text(
-                    '$bulan $tahun',
-                    style: TextStyle(color: Colors.grey[600], fontSize: 10),
-                  );
-                },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
               ),
-            ),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: (value, meta) {
-                  return Text(
-                    "${value.toInt()}",
-                    style: TextStyle(color: Colors.grey[600], fontSize: 10),
-                  );
-                },
-              ),
-            ),
+            ],
           ),
-          borderData: FlBorderData(
-            show: true,
-            border: Border.all(color: Colors.grey[300]!),
+          padding: const EdgeInsets.only(
+            top: 20,
+            right: 12,
+            bottom: 12,
+            left: 8,
           ),
-          minX: 0,
-          maxX: data.length - 1.toDouble(),
-          minY: 0,
-          maxY: _getMaxY(model),
-          lineBarsData: [
-            LineChartBarData(
-              spots: _generateSpots(data, 'berat'),
-              isCurved: true,
-              color: Colors.blue[800]!,
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: false),
-              belowBarData: BarAreaData(
+          child: LineChart(
+            LineChartData(
+              gridData: FlGridData(
                 show: true,
-                color: Colors.blue.withOpacity(0.2),
+                drawVerticalLine: false,
+                horizontalInterval: _getMaxY(model) / 5,
+                getDrawingHorizontalLine:
+                    (value) => FlLine(
+                      color: Colors.grey.withOpacity(0.2),
+                      strokeWidth: 1,
+                    ),
               ),
-            ),
-            if (model.selectedGrafik == 'Semua')
-              LineChartBarData(
-                spots: _generateSpots(data, 'tinggi'),
-                isCurved: true,
-                color: Colors.orange[800]!,
-                barWidth: 2,
-                isStrokeCapRound: true,
-                dotData: FlDotData(show: false),
-                belowBarData: BarAreaData(
-                  show: true,
-                  color: Colors.orange.withOpacity(0.2),
+              lineTouchData: LineTouchData(
+                touchTooltipData: LineTouchTooltipData(
+                  tooltipBorder: BorderSide(color: weightColor),
+                  getTooltipItems: (touchedSpots) {
+                    return touchedSpots.map((spot) {
+                      final date = data[spot.x.toInt()].tanggalPencatatan;
+                      final unit = spot.barIndex == 0 ? 'kg' : 'cm';
+                      return LineTooltipItem(
+                        '${_formatDate(date)}\n${spot.y.toStringAsFixed(1)} $unit',
+                        TextStyle(
+                          color: Colors.grey[800],
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    }).toList();
+                  },
                 ),
               ),
+              titlesData: FlTitlesData(
+                show: true,
+                rightTitles: AxisTitles(),
+                topTitles: AxisTitles(),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 30,
+                    interval: data.length > 6 ? 2 : 1,
+                    getTitlesWidget: (value, meta) {
+                      if (value.toInt() >= data.length || value.toInt() < 0) {
+                        return const Text('');
+                      }
+                      final date = data[value.toInt()].tanggalPencatatan;
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          _formatDate(date, short: data.length > 6),
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 40,
+                    getTitlesWidget: (value, meta) {
+                      return Text(
+                        "${value.toInt()}",
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              borderData: FlBorderData(show: false),
+              minX: 0,
+              maxX: (data.length - 1).toDouble(),
+              minY: 0,
+              maxY: _getMaxY(model),
+              lineBarsData: [
+                LineChartBarData(
+                  spots: _generateSpots(data, 'berat'),
+                  isCurved: true,
+                  curveSmoothness: 0.3,
+                  color: weightColor,
+                  barWidth: 3,
+                  shadow: BoxShadow(
+                    color: weightColor.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                  isStrokeCapRound: true,
+                  dotData: FlDotData(
+                    show: true,
+                    getDotPainter:
+                        (spot, percent, barData, index) => FlDotCirclePainter(
+                          radius: 3,
+                          color: weightColor,
+                          strokeWidth: 2,
+                          strokeColor: Colors.white,
+                        ),
+                  ),
+                  belowBarData: BarAreaData(
+                    show: true,
+                    gradient: LinearGradient(
+                      colors: [
+                        weightColor.withOpacity(0.2),
+                        weightColor.withOpacity(0.01),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                ),
+                if (model.selectedGrafik == 'Semua')
+                  LineChartBarData(
+                    spots: _generateSpots(data, 'tinggi'),
+                    isCurved: true,
+                    curveSmoothness: 0.3,
+                    color: heightColor,
+                    barWidth: 3,
+                    shadow: BoxShadow(
+                      color: heightColor.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                    dotData: FlDotData(
+                      show: true,
+                      getDotPainter:
+                          (spot, percent, barData, index) => FlDotCirclePainter(
+                            radius: 3,
+                            color: heightColor,
+                            strokeWidth: 2,
+                            strokeColor: Colors.white,
+                          ),
+                    ),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      gradient: LinearGradient(
+                        colors: [
+                          heightColor.withOpacity(0.2),
+                          heightColor.withOpacity(0.01),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDeskripsi(PertumbuhanViewModel model) {
+    final data = model.dataPertumbuhan;
+    if (data.isEmpty) return const SizedBox();
+
+    String title = '';
+    String desc = '';
+    IconData icon = Icons.insights_rounded;
+
+    switch (model.selectedGrafik) {
+      case 'Semua':
+        title = 'Pertumbuhan Komprehensif';
+        desc =
+            'Perkembangan berat badan dan tinggi badan ${model.selectedAnak?.nama} menunjukkan tren positif. Grafik ini membantu memantau keseimbangan antara pertumbuhan fisik dan perkembangan nutrisi.';
+        icon = Icons.bar_chart_rounded;
+        break;
+      case 'Berat Badan':
+        title = 'Perkembangan Berat Badan';
+        desc =
+            'Pola pertumbuhan berat badan yang stabil menunjukkan asupan nutrisi yang baik. Pertahankan pola makan seimbang untuk menjaga tren positif ini.';
+        icon = Icons.monitor_weight_rounded;
+        break;
+      default:
+        title = 'Perkembangan Tinggi Badan';
+        desc =
+            'Peningkatan tinggi badan yang konsisten mencerminkan perkembangan tulang dan otot yang sehat. Pastikan aktivitas fisik yang cukup dan istirahat teratur.';
+        icon = Icons.height_rounded;
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: weightColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: weightColor, size: 24),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: Colors.grey[800],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    desc,
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w500,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  List<FlSpot> _generateSpots(List<Pertumbuhan> data, String jenis) {
-    return data.asMap().entries.map((entry) {
-      int index = entry.key;
-      Pertumbuhan item = entry.value;
-      double yValue = jenis == 'berat' ? item.beratBadan : item.tinggiBadan;
-      return FlSpot(index.toDouble(), yValue);
-    }).toList();
-  }
-
-  double _getMaxY(PertumbuhanViewModel model) {
-    final data = model.dataPertumbuhan;
-    if (data.isEmpty) return 15;
-
-    if (model.selectedGrafik == 'Semua') {
-      return data
-              .map((d) => [d.beratBadan, d.tinggiBadan])
-              .expand((i) => i)
-              .reduce((a, b) => a > b ? a : b) +
-          2;
-    } else if (model.selectedGrafik == 'Berat Badan') {
-      return data.map((d) => d.beratBadan).reduce((a, b) => a > b ? a : b) + 2;
-    } else {
-      return data.map((d) => d.tinggiBadan).reduce((a, b) => a > b ? a : b) + 2;
-    }
-  }
-
-  Widget _buildDeskripsi(PertumbuhanViewModel model) {
-    final data = model.dataPertumbuhan;
-    if (data.isEmpty) return SizedBox();
-
-    String deskripsi = '';
-    if (model.selectedGrafik == 'Semua') {
-      deskripsi =
-          'Grafik menunjukkan pertumbuhan berat badan dan tinggi badan ${model.selectedAnak?.nama} secara keseluruhan. Perkembangan terlihat konsisten dengan peningkatan yang bertahap.';
-    } else if (model.selectedGrafik == 'Berat Badan') {
-      deskripsi =
-          'Berat badan ${model.selectedAnak?.nama} meningkat secara bertahap, menunjukkan pertumbuhan yang sehat sesuai tahap perkembangannya.';
-    } else {
-      deskripsi =
-          'Tinggi badan ${model.selectedAnak?.nama} bertambah secara konsisten, menunjukkan perkembangan fisik yang baik.';
-    }
-
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text(
-          deskripsi,
-          style: TextStyle(color: Colors.grey[700], height: 1.5, fontSize: 13),
-        ),
-      ),
-    );
+  String _formatDate(DateTime date, {bool short = false}) {
+    return short
+        ? '${date.day}/${date.month}'
+        : '${date.day} ${_formatBulan(date.month)}';
   }
 
   String _formatBulan(int bulan) {
@@ -332,6 +554,37 @@ class _GrafikViewState extends State<GrafikView> {
       'Nov',
       'Des',
     ];
-    return bulanList[bulan - 1]; // Karena bulan dimulai dari 1 (Januari)
+    return bulanList[bulan - 1];
+  }
+
+  List<FlSpot> _generateSpots(List<Pertumbuhan> data, String jenis) {
+    return data.asMap().entries.map((entry) {
+      int index = entry.key;
+      Pertumbuhan item = entry.value;
+      double yValue = jenis == 'berat' ? item.beratBadan : item.tinggiBadan;
+      return FlSpot(index.toDouble(), yValue);
+    }).toList();
+  }
+
+  double _getMaxY(PertumbuhanViewModel model) {
+    final data = model.dataPertumbuhan;
+    if (data.isEmpty) return 15;
+
+    double maxValue = 0;
+    if (model.selectedGrafik == 'Semua') {
+      maxValue =
+          data
+              .map((d) => [d.beratBadan, d.tinggiBadan])
+              .expand((i) => i)
+              .reduce((a, b) => a > b ? a : b) +
+          5;
+    } else if (model.selectedGrafik == 'Berat Badan') {
+      maxValue =
+          data.map((d) => d.beratBadan).reduce((a, b) => a > b ? a : b) + 3;
+    } else {
+      maxValue =
+          data.map((d) => d.tinggiBadan).reduce((a, b) => a > b ? a : b) + 5;
+    }
+    return maxValue.ceilToDouble();
   }
 }

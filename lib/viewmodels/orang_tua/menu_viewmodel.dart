@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:molita_flutter/core/services/JenisPosyanduService.dart';
 import 'package:molita_flutter/core/services/OrangTuaService.dart';
+import 'package:molita_flutter/core/services/PenjadwalanService.dart';
+import 'package:molita_flutter/models/orang_tua/jadwal_posyandu.dart';
+import 'package:molita_flutter/models/orang_tua/jenis_posyandu_model.dart';
 import 'package:molita_flutter/models/orang_tua/orang_tua_model.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/penjadwalan_viewmodal.dart';
 import 'package:molita_flutter/views/orang_tua/Dashboard/dashboard_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:molita_flutter/views/orang_tua/Edukasi/edukasi_view.dart';
@@ -13,13 +18,21 @@ class MenuViewModel extends ChangeNotifier {
   OrangTua? _orangTua;
   List<Widget> _pages = [];
   bool _isLoading = true;
+  JenisPosyandu? _jenisPosyandu;
 
+  final JenisPosyanduService _jenisPosyanduService = JenisPosyanduService();
   final OrangTuaService _service = OrangTuaService();
 
+  JenisPosyandu? get jenisPosyandu => _jenisPosyandu;
   int get currentIndex => _currentIndex;
   List<Widget> get pages => _pages;
   OrangTua? get orangTua => _orangTua;
   bool get isLoading => _isLoading;
+
+  final PenjadwalanService _PenjadwalanService = PenjadwalanService();
+
+  JadwalPosyandu? _jadwalTerdekat;
+  JadwalPosyandu? get jadwalTerdekat => _jadwalTerdekat;
 
   MenuViewModel() {
     _init();
@@ -34,8 +47,25 @@ class MenuViewModel extends ChangeNotifier {
     }
 
     if (_orangTua != null) {
+      // Ambil jenis posyandu berdasarkan ID
+      if (_orangTua!.idJenisPosyandu != null) {
+        final data = await _jenisPosyanduService.getById(
+          _orangTua!.idJenisPosyandu!,
+        );
+        _jenisPosyandu = JenisPosyandu.fromJson(data);
+
+        // Ambil jadwal terdekat
+        _jadwalTerdekat = await _PenjadwalanService.getJadwalTerdekat(
+          _orangTua!.idJenisPosyandu!,
+        );
+      }
+
       _pages = [
-        DashboardView(),
+        DashboardView(
+          orangTua: _orangTua!,
+          jenisPosyandu: _jenisPosyandu!,
+          jadwalPosyandu: _jadwalTerdekat!,
+        ),
         PenjadwalanView(
           idOrangTua: _orangTua?.idOrangTua ?? '',
           idjenisPosyandu: _orangTua!.idJenisPosyandu ?? '',

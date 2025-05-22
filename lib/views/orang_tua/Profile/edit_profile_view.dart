@@ -20,40 +20,80 @@ class _EditProfileViewState extends State<EditProfileView> {
   late TextEditingController _nikAyahController;
   late TextEditingController _alamatController;
   late TextEditingController _noTeleponController;
+  final _formKey = GlobalKey<FormState>();
+  final _primaryColor = const Color(0xFF2196F3);
+  final _secondaryColor = const Color(0xFF64B5F6);
 
   @override
   void initState() {
     super.initState();
     _viewModel = ProfileViewModel();
-    _viewModel.setOrangTua(widget.orangTua);
+    _loadData();
+    _initializeControllers(widget.orangTua);
+  }
 
-    _namaIbuController = TextEditingController(text: widget.orangTua.namaIbu);
-    _namaAyahController = TextEditingController(text: widget.orangTua.namaAyah);
-    _nikIbuController = TextEditingController(text: widget.orangTua.nikIbu);
-    _nikAyahController = TextEditingController(text: widget.orangTua.nikAyah);
-    _alamatController = TextEditingController(text: widget.orangTua.alamat);
+  void _initializeControllers(OrangTua orangTua) {
+    _namaIbuController = TextEditingController(text: orangTua.namaIbu ?? '');
+    _namaAyahController = TextEditingController(text: orangTua.namaAyah ?? '');
+    _nikIbuController = TextEditingController(text: orangTua.nikIbu ?? '');
+    _nikAyahController = TextEditingController(text: orangTua.nikAyah ?? '');
+    _alamatController = TextEditingController(text: orangTua.alamat ?? '');
     _noTeleponController = TextEditingController(
-      text: widget.orangTua.noTelepon,
+      text: orangTua.noTelepon ?? '',
     );
+  }
+
+  Future<void> _loadData() async {
+    await _viewModel.loadOrangTua(widget.orangTua.idOrangTua!);
+
+    if (_viewModel.orangTua != null) {
+      _namaIbuController.text = _viewModel.orangTua!.namaIbu ?? '';
+      _namaAyahController.text = _viewModel.orangTua!.namaAyah ?? '';
+      _nikIbuController.text = _viewModel.orangTua!.nikIbu ?? '';
+      _nikAyahController.text = _viewModel.orangTua!.nikAyah ?? '';
+      _alamatController.text = _viewModel.orangTua!.alamat ?? '';
+      _noTeleponController.text = _viewModel.orangTua!.noTelepon ?? '';
+      setState(() {});
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant EditProfileView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.orangTua.idOrangTua != widget.orangTua.idOrangTua) {
+      _loadData();
+      _initializeControllers(widget.orangTua);
+    }
   }
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
       await _viewModel.uploadNewPhoto(
         widget.orangTua.idOrangTua!,
         pickedFile.path,
       );
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Foto berhasil diunggah')));
+
+      setState(() {
+        _viewModel.loadOrangTua(widget.orangTua.idOrangTua);
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Foto berhasil diunggah'),
+          backgroundColor: _primaryColor,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
     }
   }
 
   Future<void> _submitForm() async {
-    if (_validateForm()) {
+    if (_formKey.currentState!.validate()) {
       final data = {
         'nama_ibu': _namaIbuController.text,
         'nama_ayah': _namaAyahController.text,
@@ -62,117 +102,284 @@ class _EditProfileViewState extends State<EditProfileView> {
         'alamat': _alamatController.text,
         'no_telepon': _noTeleponController.text,
       };
+
       await _viewModel.updateProfileData(widget.orangTua.idOrangTua!, data);
+
+      setState(() {
+        _loadData();       
+        _initializeControllers(widget.orangTua);
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profil berhasil diperbarui')),
+        SnackBar(
+          content: const Text('Profil berhasil diperbarui'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       );
     }
   }
 
-  bool _validateForm() {
-    // Add validation logic here
-    return true; // Return true if valid
+  @override
+  void dispose() {
+    _namaIbuController.dispose();
+    _namaAyahController.dispose();
+    _nikIbuController.dispose();
+    _nikAyahController.dispose();
+    _alamatController.dispose();
+    _noTeleponController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profil'),
-        backgroundColor: Colors.blue[800], // Primary color
+        title: const Text(
+          'Edit Profil',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [_primaryColor, _secondaryColor],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
-          IconButton(icon: const Icon(Icons.save), onPressed: _submitForm),
+          IconButton(
+            icon: const Icon(Icons.save_rounded, color: Colors.white),
+            onPressed: _viewModel.isLoading ? null : _submitForm,
+            tooltip: 'Simpan Perubahan',
+          ),
         ],
       ),
       body: Container(
-        color: Colors.grey[100], // Background color
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            // Foto Profil
-            Card(
-              elevation: 4,
-              color: Colors.white, // Card background color
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Center(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade50, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
                   child: Stack(
+                    clipBehavior: Clip.none,
                     children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundImage: NetworkImage(
-                          "${ApiConstant.baseUrl}storage/${widget.orangTua.img}",
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: _primaryColor, width: 3),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.blue.withOpacity(0.2),
+                              blurRadius: 10,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Colors.blue.shade100,
+                          backgroundImage: NetworkImage(
+                            "${ApiConstant.baseUrl}storage/${_viewModel.orangTua?.img ?? widget.orangTua.img}",
+                          ),
                         ),
                       ),
                       Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26.withOpacity(0.5),
-                                blurRadius: 4,
-                              ),
-                            ],
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: _pickImage,
-                            iconSize: 18,
-                            color: Colors.blue[800],
+                        bottom: -5,
+                        right: -5,
+                        child: GestureDetector(
+                          onTap: _viewModel.isLoading ? null : _pickImage,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: _primaryColor,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blue.withOpacity(0.3),
+                                  blurRadius: 6,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Form Fields
-            _buildTextField('Nama Ibu', _namaIbuController),
-            _buildTextField('Nama Ayah', _namaAyahController),
-            _buildTextField('NIK Ibu', _nikIbuController),
-            _buildTextField('NIK Ayah', _nikAyahController),
-            _buildTextField('Alamat', _alamatController),
-            _buildTextField('No. Telepon', _noTeleponController),
-
-            const SizedBox(height: 30),
-
-            _viewModel.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : ElevatedButton(
-                  onPressed: _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[800],
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    textStyle: const TextStyle(fontSize: 16),
-                  ),
-                  child: const Text('Simpan Perubahan'),
+                const SizedBox(height: 32),
+                _buildTextField('Nama Ibu', _namaIbuController, Icons.person),
+                const SizedBox(height: 16),
+                _buildTextField('Nama Ayah', _namaAyahController, Icons.person),
+                const SizedBox(height: 16),
+                _buildTextField(
+                  'NIK Ibu',
+                  _nikIbuController,
+                  Icons.credit_card,
+                  keyboardType: TextInputType.number,
                 ),
-          ],
+                const SizedBox(height: 16),
+                _buildTextField(
+                  'NIK Ayah',
+                  _nikAyahController,
+                  Icons.credit_card,
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                _buildTextField(
+                  'Alamat',
+                  _alamatController,
+                  Icons.home,
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 16),
+                _buildTextField(
+                  'No. Telepon',
+                  _noTeleponController,
+                  Icons.phone,
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 32),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow:
+                        _viewModel.isLoading
+                            ? []
+                            : [
+                              BoxShadow(
+                                color: _primaryColor.withOpacity(0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: _viewModel.isLoading ? null : _submitForm,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _primaryColor,
+                      disabledBackgroundColor: Colors.blue.shade300,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child:
+                        _viewModel.isLoading
+                            ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                            : const Text(
+                              'SIMPAN PERUBAHAN',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.8,
+                                color: Colors.white,
+                              ),
+                            ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller,
+    IconData icon, {
+    int maxLines = 1,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: TextFormField(
         controller: controller,
+        maxLines: maxLines,
+        keyboardType: keyboardType,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Harap isi field ini';
+          }
+          if (label.contains('Telepon') &&
+              !RegExp(r'^[0-9]+$').hasMatch(value)) {
+            return 'Nomor telepon tidak valid';
+          }
+          if (label.contains('NIK') && value.length != 16) {
+            return 'NIK harus 16 digit';
+          }
+          return null;
+        },
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          prefixIcon: Icon(icon, color: _primaryColor),
           filled: true,
-          fillColor: Colors.white, // Text field background color
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: _primaryColor, width: 2),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.red, width: 1.5),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.red, width: 1.5),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 20,
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.never,
         ),
+        style: const TextStyle(fontSize: 15),
       ),
     );
   }

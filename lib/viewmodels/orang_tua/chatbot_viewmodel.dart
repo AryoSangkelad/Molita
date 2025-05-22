@@ -40,7 +40,7 @@ Jadi, ada yang bisa Molita bantu hari ini?
     };
 
     final body = jsonEncode({
-      "model": "google/gemma-3-4b-it:free",
+      "model": "google/gemma-3-27b-it:free",
       "messages": [
         {"role": "system", "content": chatbotSystemMessage},
         ..._messages.map((msg) => msg.toMap()),

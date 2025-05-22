@@ -21,6 +21,7 @@ class ProfileViewModel with ChangeNotifier {
     try {
       final updated = await OrangTuaService().updateProfile(id, data);
       _orangTua = updated;
+      loadOrangTua(id);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -47,6 +48,20 @@ class ProfileViewModel with ChangeNotifier {
           img: newImageUrl,
         );
       }
+      loadOrangTua(id);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadOrangTua(String? id) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final orangTuaData = await OrangTuaService().fetchOrangTua(id!);
+      _orangTua = orangTuaData;
     } finally {
       _isLoading = false;
       notifyListeners();

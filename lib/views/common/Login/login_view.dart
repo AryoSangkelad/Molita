@@ -2,6 +2,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:molita_flutter/core/constants/colors_constant.dart';
 import 'package:molita_flutter/viewmodels/common/login_viewmodel.dart';
+import 'package:molita_flutter/views/orang_tua/maps/maps_view.dart';
 import 'package:provider/provider.dart';
 
 class LoginView extends StatelessWidget {
@@ -114,8 +115,7 @@ class LoginView extends StatelessWidget {
                                   margin: EdgeInsets.all(16),
                                   borderRadius: BorderRadius.circular(12),
                                   duration: Duration(seconds: 3),
-                                  flushbarPosition:
-                                      FlushbarPosition.TOP, 
+                                  flushbarPosition: FlushbarPosition.TOP,
                                   icon: Icon(
                                     Icons.error_outline,
                                     color: Colors.white,
@@ -127,6 +127,12 @@ class LoginView extends StatelessWidget {
                                     context,
                                     '/orang_tua',
                                   );
+                                  // Navigator.pushReplacement(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => MapsView(),
+                                  //   ),
+                                  // );
                                 } else if (loginViewModel.role == 'admin') {
                                   Navigator.pushReplacementNamed(
                                     context,

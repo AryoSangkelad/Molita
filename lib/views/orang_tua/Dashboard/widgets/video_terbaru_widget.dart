@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:molita_flutter/core/constants/api_constant.dart';
-import 'package:molita_flutter/viewmodels/orang_tua/edukasi_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
 import 'package:molita_flutter/views/orang_tua/Edukasi/video_detail_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-Widget buildVideoTerbaru(EdukasiViewModel viewModel) {
+Widget buildVideoTerbaru(DashboardViewModel viewModel) {
   return _VideoTerbaruSlider(viewModel: viewModel);
 }
 
 class _VideoTerbaruSlider extends StatefulWidget {
-  final EdukasiViewModel viewModel;
+  final DashboardViewModel viewModel;
 
   const _VideoTerbaruSlider({super.key, required this.viewModel});
 

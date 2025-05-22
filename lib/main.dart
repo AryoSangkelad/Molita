@@ -4,7 +4,9 @@ import 'package:molita_flutter/viewmodels/common/onboarding_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/chatbot_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/common/login_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/detail_anak_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/edukasi_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/maps_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/menu_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/common/register_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/penjadwalan_viewmodal.dart';
@@ -27,6 +29,7 @@ class MolitaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => MapsViewModel()),
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
         ChangeNotifierProvider(create: (_) => RegisterViewModel()),
@@ -37,11 +40,16 @@ class MolitaApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ChatBotViewModel()),
         ChangeNotifierProvider(create: (_) => EdukasiViewModel()),
         ChangeNotifierProvider(create: (_) => ProfileViewModel()),
+        ChangeNotifierProvider(create: (_) => DetailAnakViewModel()),
       ],
       child: MaterialApp(
         title: 'Molita',
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          primaryColor: Colors.blue,
+        ),
         routes: AppRoutes.routes,
       ),
     );
