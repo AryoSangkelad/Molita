@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:molita_flutter/core/constants/api_constant.dart';
+import 'package:molita_flutter/core/constants/app_constant.dart';
 import 'package:molita_flutter/models/orang_tua/chat_message_model.dart';
 
 class ChatBotViewModel extends ChangeNotifier {
@@ -12,7 +12,7 @@ class ChatBotViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  final String _apiKey = 'Bearer ${ApiConstant.ApiKeyAI}';
+  final String _apiKey = 'Bearer ${AppConstant.ApiKeyAI}';
 
   Future<void> sendMessage(String message) async {
     _messages.add(

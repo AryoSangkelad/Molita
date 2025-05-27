@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:molita_flutter/core/constants/api_constant.dart';
+import 'package:molita_flutter/core/constants/app_constant.dart';
 import 'package:molita_flutter/models/orang_tua/artikel_edukasi_model.dart';
 import 'package:molita_flutter/models/orang_tua/video_edukasi_model.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/edukasi_viewmodel.dart';
@@ -48,33 +48,33 @@ class _EdukasiViewState extends State<EdukasiView> {
             letterSpacing: -0.5,
           ),
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(80),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            child: Material(
-              elevation: 2,
-              borderRadius: BorderRadius.circular(16),
-              child: TextField(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: 'Cari materi edukasi...',
-                  prefixIcon: Icon(
-                    Icons.search_rounded,
-                    color: Colors.grey[600],
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                  hintStyle: TextStyle(color: Colors.grey[600], fontSize: 15),
-                ),
-              ),
-            ),
-          ),
-        ),
+        // bottom: PreferredSize(
+        //   preferredSize: const Size.fromHeight(80),
+        //   child: Padding(
+        //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        //     child: Material(
+        //       elevation: 2,
+        //       borderRadius: BorderRadius.circular(16),
+        //       child: TextField(
+        //         decoration: InputDecoration(
+        //           filled: true,
+        //           fillColor: Colors.white,
+        //           hintText: 'Cari materi edukasi...',
+        //           prefixIcon: Icon(
+        //             Icons.search_rounded,
+        //             color: Colors.grey[600],
+        //           ),
+        //           border: OutlineInputBorder(
+        //             borderRadius: BorderRadius.circular(16),
+        //             borderSide: BorderSide.none,
+        //           ),
+        //           contentPadding: const EdgeInsets.symmetric(vertical: 14),
+        //           hintStyle: TextStyle(color: Colors.grey[600], fontSize: 15),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -328,7 +328,7 @@ class EdukasiCard extends StatelessWidget {
     final theme = Theme.of(context);
     bool isVideo = item is VideoEdukasi;
     String thumbnailUrl =
-        '${ApiConstant.baseUrl}storage/${isVideo ? (item as VideoEdukasi).thumbnail : (item as ArtikelEdukasi).thumbnail}';
+        '${AppConstant.baseUrl}storage/${isVideo ? (item as VideoEdukasi).thumbnail : (item as ArtikelEdukasi).thumbnail}';
     String title =
         isVideo ? (item as VideoEdukasi).judul : (item as ArtikelEdukasi).judul;
 

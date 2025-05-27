@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:molita_flutter/core/constants/api_constant.dart';
+import 'package:molita_flutter/core/constants/app_constant.dart';
 import 'package:molita_flutter/models/orang_tua/orang_tua_model.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/profile_viewmodel.dart';
 
@@ -16,8 +16,6 @@ class _EditProfileViewState extends State<EditProfileView> {
   late ProfileViewModel _viewModel;
   late TextEditingController _namaIbuController;
   late TextEditingController _namaAyahController;
-  late TextEditingController _nikIbuController;
-  late TextEditingController _nikAyahController;
   late TextEditingController _alamatController;
   late TextEditingController _noTeleponController;
   final _formKey = GlobalKey<FormState>();
@@ -35,8 +33,6 @@ class _EditProfileViewState extends State<EditProfileView> {
   void _initializeControllers(OrangTua orangTua) {
     _namaIbuController = TextEditingController(text: orangTua.namaIbu ?? '');
     _namaAyahController = TextEditingController(text: orangTua.namaAyah ?? '');
-    _nikIbuController = TextEditingController(text: orangTua.nikIbu ?? '');
-    _nikAyahController = TextEditingController(text: orangTua.nikAyah ?? '');
     _alamatController = TextEditingController(text: orangTua.alamat ?? '');
     _noTeleponController = TextEditingController(
       text: orangTua.noTelepon ?? '',
@@ -49,8 +45,6 @@ class _EditProfileViewState extends State<EditProfileView> {
     if (_viewModel.orangTua != null) {
       _namaIbuController.text = _viewModel.orangTua!.namaIbu ?? '';
       _namaAyahController.text = _viewModel.orangTua!.namaAyah ?? '';
-      _nikIbuController.text = _viewModel.orangTua!.nikIbu ?? '';
-      _nikAyahController.text = _viewModel.orangTua!.nikAyah ?? '';
       _alamatController.text = _viewModel.orangTua!.alamat ?? '';
       _noTeleponController.text = _viewModel.orangTua!.noTelepon ?? '';
       setState(() {});
@@ -97,8 +91,6 @@ class _EditProfileViewState extends State<EditProfileView> {
       final data = {
         'nama_ibu': _namaIbuController.text,
         'nama_ayah': _namaAyahController.text,
-        'nik_ibu': _nikIbuController.text,
-        'nik_ayah': _nikAyahController.text,
         'alamat': _alamatController.text,
         'no_telepon': _noTeleponController.text,
       };
@@ -106,7 +98,7 @@ class _EditProfileViewState extends State<EditProfileView> {
       await _viewModel.updateProfileData(widget.orangTua.idOrangTua!, data);
 
       setState(() {
-        _loadData();       
+        _loadData();
         _initializeControllers(widget.orangTua);
       });
 
@@ -127,8 +119,6 @@ class _EditProfileViewState extends State<EditProfileView> {
   void dispose() {
     _namaIbuController.dispose();
     _namaAyahController.dispose();
-    _nikIbuController.dispose();
-    _nikAyahController.dispose();
     _alamatController.dispose();
     _noTeleponController.dispose();
     super.dispose();
@@ -196,7 +186,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                           radius: 60,
                           backgroundColor: Colors.blue.shade100,
                           backgroundImage: NetworkImage(
-                            "${ApiConstant.baseUrl}storage/${_viewModel.orangTua?.img ?? widget.orangTua.img}",
+                            "${AppConstant.baseUrl}storage/${_viewModel.orangTua?.img ?? widget.orangTua.img}",
                           ),
                         ),
                       ),
@@ -233,20 +223,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                 _buildTextField('Nama Ibu', _namaIbuController, Icons.person),
                 const SizedBox(height: 16),
                 _buildTextField('Nama Ayah', _namaAyahController, Icons.person),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  'NIK Ibu',
-                  _nikIbuController,
-                  Icons.credit_card,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  'NIK Ayah',
-                  _nikAyahController,
-                  Icons.credit_card,
-                  keyboardType: TextInputType.number,
-                ),
                 const SizedBox(height: 16),
                 _buildTextField(
                   'Alamat',

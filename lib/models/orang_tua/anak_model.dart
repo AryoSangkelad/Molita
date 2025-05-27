@@ -9,7 +9,7 @@ class Anak {
   final String jenisKelamin;
   final String? idOrangTua;
   final int? idDesa;
-  final Desa? desa;
+  final DesaDua? desa;
 
   Anak({
     required this.id,
@@ -31,7 +31,7 @@ class Anak {
       jenisKelamin: json['jenis_kelamin'],
       idOrangTua: json['id_orang_tua'],
       idDesa: json['id_desa'],
-      desa: json['desa'] != null ? Desa.fromJson(json['desa']) : null,
+      desa: json['desa'] != null ? DesaDua.fromJson(json['desa']) : null,
     );
   }
 }

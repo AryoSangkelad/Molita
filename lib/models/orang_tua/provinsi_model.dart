@@ -9,3 +9,4 @@ class Provinsi {
     return Provinsi(id: json['id_provinsi'], nama: json['nama_provinsi']);
   }
 }
+ 

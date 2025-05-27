@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:molita_flutter/models/orang_tua/jadwal_posyandu.dart';
 import 'package:molita_flutter/models/orang_tua/jenis_posyandu_model.dart';
 import 'package:molita_flutter/models/orang_tua/orang_tua_model.dart';
@@ -14,14 +13,14 @@ import 'package:provider/provider.dart';
 
 class DashboardView extends StatefulWidget {
   final OrangTua orangTua;
-  final JenisPosyandu jenisPosyandu;
-  final JadwalPosyandu jadwalPosyandu;
+  final JenisPosyandu? jenisPosyandu;
+  final JadwalPosyandu? jadwalPosyandu;
 
   const DashboardView({
     Key? key,
     required this.orangTua,
-    required this.jenisPosyandu,
-    required this.jadwalPosyandu,
+    this.jenisPosyandu,
+    this.jadwalPosyandu,
   }) : super(key: key);
 
   @override

@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:molita_flutter/core/constants/api_constant.dart';
+import 'package:molita_flutter/core/constants/app_constant.dart';
 import 'package:molita_flutter/models/orang_tua/anak_model.dart';
 import 'package:http/http.dart' as http;
 
 class AnakService {
   Future<List<Anak>> getAllByOrangTua(String userId) async {
     final response = await http.get(
-      Uri.parse('${ApiConstant.baseUrlApi}/anak/orang-tua/$userId'),
+      Uri.parse('${AppConstant.baseUrlApi}/anak/orang-tua/$userId'),
     );
 
     if (response.statusCode == 200) {
@@ -20,7 +20,7 @@ class AnakService {
 
   Future<Anak> getById(String anakId) async {
     final response = await http.get(
-      Uri.parse('${ApiConstant.baseUrlApi}/anak/$anakId'),
+      Uri.parse('${AppConstant.baseUrlApi}/anak/$anakId'),
     );
 
     if (response.statusCode == 200) {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:molita_flutter/core/constants/api_constant.dart';
+import 'package:molita_flutter/core/constants/app_constant.dart';
+import 'package:molita_flutter/models/common/register_model.dart';
 
 class AuthService {
   Future<Map<String, dynamic>> login(
@@ -9,7 +10,7 @@ class AuthService {
   ) async {
     try {
       final response = await http.post(
-        Uri.parse('${ApiConstant.baseUrlApi}/login'),
+        Uri.parse('${AppConstant.baseUrlApi}/login'),
         body: {'email_or_username': emailOrUsername, 'password': password},
       );
 
@@ -29,6 +30,25 @@ class AuthService {
       }
     } catch (e) {
       return {'success': false, 'message': 'Terjadi kesalahan koneksi.'};
+    }
+  }
+
+  Future<String> register(RegisterModel data) async {
+    print("AMAN0");
+    final response = await http.post(
+      Uri.parse('${AppConstant.baseUrlApi}/register-orang-tua'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(data.toJson()),
+    );
+
+    print("AMAN0");
+    final result = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      print("AMANA");
+      return result['message'];
+    } else {
+      print("AMANA3");
+      return result['message'] ?? 'Terjadi kesalahan saat mendaftar';
     }
   }
 }

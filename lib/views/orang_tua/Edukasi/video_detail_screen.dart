@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:molita_flutter/models/orang_tua/video_edukasi_model.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -168,12 +169,15 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: Colors.grey[200]!),
           ),
-          child: Text(
-            widget.video.deskripsi,
-            style: textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[700],
-              height: 1.5,
-            ),
+          child: Html(
+            data: widget.video.deskripsi,
+            style: {
+              "body": Style(
+                color: Colors.grey[700],
+                fontSize: FontSize.medium,
+                lineHeight: LineHeight.number(1.5),
+              ),
+            },
           ),
         ),
       ],

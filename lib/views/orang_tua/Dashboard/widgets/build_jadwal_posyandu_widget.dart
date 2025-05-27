@@ -1,17 +1,22 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:molita_flutter/models/orang_tua/jadwal_posyandu.dart';
 import 'package:molita_flutter/models/orang_tua/jenis_posyandu_model.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/route_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 Widget buildJadwalPosyandu(
   BuildContext context,
-  JenisPosyandu jenisPosyandu,
-  JadwalPosyandu jadwalPosyandu,
+  JenisPosyandu? jenisPosyandu,
+  JadwalPosyandu? jadwalPosyandu,
 ) {
   final primaryColor = Theme.of(context).colorScheme.primary;
   final textTheme = Theme.of(context).textTheme;
+
+  if (jenisPosyandu == null) return const SizedBox.shrink();
 
   return Card(
     elevation: 4,
@@ -29,7 +34,7 @@ Widget buildJadwalPosyandu(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${jenisPosyandu.pos}',
+                    jenisPosyandu.pos ?? '-',
                     style: textTheme.titleMedium?.copyWith(
                       color: primaryColor,
                       fontWeight: FontWeight.bold,
@@ -42,7 +47,7 @@ Widget buildJadwalPosyandu(
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          '${jenisPosyandu.alamat}',
+                          jenisPosyandu.alamat ?? '-',
                           style: textTheme.bodyMedium?.copyWith(
                             fontStyle: FontStyle.italic,
                             color: Colors.grey[600],
@@ -67,244 +72,248 @@ Widget buildJadwalPosyandu(
 void _showPosyanduDetails(
   BuildContext context,
   JenisPosyandu jenisPosyandu,
-  JadwalPosyandu jadwalPosyandu,
-) async {
-  final primaryColor = Theme.of(context).colorScheme.primary;
-  final textTheme = Theme.of(context).textTheme;
-  final screenHeight = MediaQuery.of(context).size.height;
-  LatLng? userLocation;
-  try {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Layanan lokasi tidak aktif')),
-      );
-    }
+  JadwalPosyandu? jadwalPosyandu,
+) {
+  final posyanduLocation = _parseLatLng(jenisPosyandu);
 
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Izin lokasi ditolak')));
-    } else {
-      Position position = await Geolocator.getCurrentPosition();
-      userLocation = LatLng(position.latitude, position.longitude);
-    }
-  } catch (e) {
-    print(e);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Gagal mendapatkan lokasi: $e')));
-  }
-
-  LatLng _parsePosition(dynamic model) {
-    return LatLng(
-      _parseCoordinate(model.latitude),
-      _parseCoordinate(model.longitude),
-    );
-  }
-
-  final distance =
-      userLocation != null
-          ? Distance().as(
-            LengthUnit.Kilometer,
-            userLocation,
-            _parsePosition(jenisPosyandu),
-          )
-          : null;
+  final routeViewModel = RouteViewModel();
 
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder:
-        (context) => Container(
-          constraints: BoxConstraints(
-            maxHeight: screenHeight * 0.85,
-            minHeight: screenHeight * 0.5,
+        (context) => ChangeNotifierProvider.value(
+          value: routeViewModel,
+          child: _PosyanduDetailContent(
+            posyanduLocation: posyanduLocation,
+            jenisPosyandu: jenisPosyandu,
+            jadwalPosyandu: jadwalPosyandu,
           ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 16,
-                spreadRadius: 4,
-              ),
-            ],
+        ),
+  );
+}
+
+LatLng _parseLatLng(JenisPosyandu posyandu) {
+  return LatLng(
+    _parseCoordinate(posyandu.latitude),
+    _parseCoordinate(posyandu.longitude),
+  );
+}
+
+double _parseCoordinate(dynamic value) {
+  if (value == null) return 0.0;
+  if (value is double) return value;
+  if (value is String) return double.tryParse(value) ?? 0.0;
+  return 0.0;
+}
+
+class _PosyanduDetailContent extends StatefulWidget {
+  final LatLng posyanduLocation;
+  final JenisPosyandu jenisPosyandu;
+  final JadwalPosyandu? jadwalPosyandu;
+
+  const _PosyanduDetailContent({
+    required this.posyanduLocation,
+    required this.jenisPosyandu,
+    required this.jadwalPosyandu,
+  });
+
+  @override
+  State<_PosyanduDetailContent> createState() => _PosyanduDetailContentState();
+}
+
+class _PosyanduDetailContentState extends State<_PosyanduDetailContent> {
+  LatLng? _userLocation;
+  StreamSubscription<Position>? _positionStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _initLocationTracking();
+  }
+
+  void _initLocationTracking() async {
+    final viewModel = Provider.of<RouteViewModel>(context, listen: false);
+
+    try {
+      final permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        await Geolocator.requestPermission();
+      }
+
+      if (await Geolocator.isLocationServiceEnabled()) {
+        final position = await Geolocator.getCurrentPosition();
+        _userLocation = LatLng(position.latitude, position.longitude);
+
+        await viewModel.getRoute(_userLocation!, widget.posyanduLocation);
+
+        _positionStream = Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(distanceFilter: 10),
+        ).listen((Position pos) async {
+          final newLocation = LatLng(pos.latitude, pos.longitude);
+          if (_userLocation != newLocation) {
+            setState(() => _userLocation = newLocation);
+            await viewModel.getRoute(_userLocation!, widget.posyanduLocation);
+          }
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Gagal mendapatkan lokasi: $e")));
+    }
+  }
+
+  @override
+  void dispose() {
+    _positionStream?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Container(
+      constraints: BoxConstraints(maxHeight: screenHeight * 0.85),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)],
+      ),
+      child: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 12),
+            height: 4,
+            width: 40,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
-          child: Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 12, bottom: 8),
-                width: 48,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Text(
-                          'Detail Posyandu',
-                          style: textTheme.headlineSmall?.copyWith(
-                            color: primaryColor,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Text(
+                      'Detail Posyandu',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 24),
-                      Container(
-                        height: 200,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 8,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: FlutterMap(
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: 220,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Consumer<RouteViewModel>(
+                        builder: (context, viewModel, _) {
+                          return FlutterMap(
                             options: MapOptions(
-                              center: _parsePosition(jenisPosyandu),
-                              zoom: 15.0,
+                              center: _userLocation ?? widget.posyanduLocation,
+                              zoom: 15,
                             ),
                             children: [
                               TileLayer(
                                 urlTemplate:
                                     'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                                 userAgentPackageName: 'com.example.app',
-                                subdomains: ['a', 'b', 'c'],
                               ),
+                              if (!viewModel.isLoading &&
+                                  viewModel.route?.routePoints.isNotEmpty ==
+                                      true)
+                                PolylineLayer(
+                                  polylines: [
+                                    Polyline(
+                                      points: viewModel.route!.routePoints,
+                                      strokeWidth: 4.5,
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                  ],
+                                ),
                               MarkerLayer(
                                 markers: [
-                                  if (userLocation != null)
+                                  if (_userLocation != null)
                                     Marker(
-                                      point: userLocation,
                                       width: 40,
                                       height: 40,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue.withOpacity(0.2),
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Colors.blue,
-                                            width: 2,
-                                          ),
-                                        ),
-                                        child: const Icon(
-                                          Icons.person_pin_circle,
-                                          color: Colors.blue,
-                                          size: 24,
-                                        ),
+                                      point: _userLocation!,
+                                      child: const Icon(
+                                        Icons.person_pin_circle,
+                                        color: Colors.blue,
                                       ),
                                     ),
                                   Marker(
-                                    point: _parsePosition(jenisPosyandu),
-                                    width: 48,
-                                    height: 48,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: primaryColor.withOpacity(0.2),
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: primaryColor,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        Icons.local_hospital_rounded,
-                                        color: primaryColor,
-                                        size: 24,
-                                      ),
+                                    width: 40,
+                                    height: 40,
+                                    point: widget.posyanduLocation,
+                                    child: Icon(
+                                      Icons.local_hospital_rounded,
+                                      color: theme.colorScheme.primary,
                                     ),
                                   ),
                                 ],
                               ),
-                              PolylineLayer(
-                                polylines: [
-                                  if (userLocation != null)
-                                    Polyline(
-                                      points: [
-                                        userLocation,
-                                        _parsePosition(jenisPosyandu),
-                                      ],
-                                      strokeWidth: 3.0,
-                                      color: primaryColor.withOpacity(0.7),
-                                      borderStrokeWidth: 1,
-                                      borderColor: Colors.white,
-                                    ),
-                                ],
-                              ),
                             ],
-                          ),
-                        ),
+                          );
+                        },
                       ),
-                      const SizedBox(height: 24),
-                      _buildModernDetailRow(
-                        context,
-                        icon: Icons.location_on,
-                        title: 'Lokasi',
-                        value: '${jenisPosyandu.alamat}',
-                      ),
-                      _buildModernDetailRow(
-                        context,
-                        icon: Icons.event,
-                        title: 'Tanggal',
-                        value:
-                            '${jadwalPosyandu.tanggal.toLocal()}'.split(
-                              ' ',
-                            )[0], // formatting tanggal
-                      ),
-                      _buildModernDetailRow(
-                        context,
-                        icon: Icons.schedule,
-                        title: 'Waktu',
-                        value:
-                            '${jadwalPosyandu.jamMulai.format(context)} - ${jadwalPosyandu.jamSelesai.format(context)}',
-                      ),
-                      _buildModernDetailRow(
-                        context,
-                        icon: Icons.assignment,
-                        title: 'Kegiatan',
-                        value: '${jadwalPosyandu.kegiatan}',
-                      ),
-                      _buildModernDetailRow(
-                        context,
-                        icon: Icons.note,
-                        title: 'Catatan',
-                        value: jadwalPosyandu.catatan ?? '-',
-                      ),
-
-                      const SizedBox(height: 24),
-                    ],
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 24),
+                  _buildModernDetailRow(
+                    context,
+                    icon: Icons.location_on,
+                    title: 'Alamat',
+                    value: widget.jenisPosyandu.alamat ?? '-',
+                  ),
+                  _buildModernDetailRow(
+                    context,
+                    icon: Icons.event,
+                    title: 'Tanggal',
+                    value:
+                        widget.jadwalPosyandu != null
+                            ? '${widget.jadwalPosyandu?.tanggal.toLocal()}'
+                                .split(' ')[0]
+                            : '-',
+                  ),
+                  _buildModernDetailRow(
+                    context,
+                    icon: Icons.schedule,
+                    title: 'Waktu',
+                    value:
+                        widget.jadwalPosyandu != null
+                            ? '${widget.jadwalPosyandu?.jamMulai.format(context)} - ${widget.jadwalPosyandu?.jamSelesai.format(context)}'
+                            : '-',
+                  ),
+                  _buildModernDetailRow(
+                    context,
+                    icon: Icons.assignment,
+                    title: 'Kegiatan',
+                    value: widget.jadwalPosyandu?.kegiatan ?? '-',
+                  ),
+                  _buildModernDetailRow(
+                    context,
+                    icon: Icons.note,
+                    title: 'Catatan',
+                    value: widget.jadwalPosyandu?.catatan ?? '-',
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-  );
+        ],
+      ),
+    );
+  }
 }
 
 Widget _buildModernDetailRow(
@@ -360,11 +369,4 @@ Widget _buildModernDetailRow(
       ],
     ),
   );
-}
-
-double _parseCoordinate(dynamic value) {
-  if (value == null) return 0.0;
-  if (value is double) return value;
-  if (value is String) return double.tryParse(value) ?? 0.0;
-  return 0.0;
 }

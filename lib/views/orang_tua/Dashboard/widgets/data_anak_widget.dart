@@ -34,7 +34,7 @@ Widget buildDataAnak(BuildContext context, DashboardViewModel viewModel) {
           itemCount: anakList.length,
           itemBuilder: (context, index) {
             final child = anakList[index];
-            final isMale = child.jenisKelamin == "Laki-Laki";
+            final isMale = child.jenisKelamin == "Laki-laki";
             final genderColor =
                 isMale
                     ? Colors.blueAccent.shade400

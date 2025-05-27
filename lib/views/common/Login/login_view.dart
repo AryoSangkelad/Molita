@@ -2,10 +2,16 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:molita_flutter/core/constants/colors_constant.dart';
 import 'package:molita_flutter/viewmodels/common/login_viewmodel.dart';
-import 'package:molita_flutter/views/orang_tua/maps/maps_view.dart';
 import 'package:provider/provider.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
+  @override
+  _LoginViewState createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  bool _obscurePassword = true;
+
   @override
   Widget build(BuildContext context) {
     LoginViewModel loginViewModel = Provider.of<LoginViewModel>(context);
@@ -25,7 +31,7 @@ class LoginView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -48,7 +54,7 @@ class LoginView extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Email TextField
+                // Input Email / Username
                 TextField(
                   controller: loginViewModel.emailorUsernameController,
                   decoration: InputDecoration(
@@ -64,16 +70,28 @@ class LoginView extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Password TextField
+                // Input Password dengan toggle visibility
                 TextField(
                   controller: loginViewModel.passwordController,
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
                     hintText: 'Masukan Sandi Anda',
                     prefixIcon: Icon(Icons.lock, color: Colors.blue),
-                    suffixIcon: Icon(Icons.visibility, color: Colors.grey),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                       borderSide: BorderSide.none,
@@ -85,7 +103,9 @@ class LoginView extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/lupa-password');
+                    },
                     child: const Text(
                       "Lupa Sandi?",
                       style: TextStyle(color: Colors.blue),
@@ -112,11 +132,11 @@ class LoginView extends StatelessWidget {
                                 Flushbar(
                                   message: loginViewModel.errorMessage!,
                                   backgroundColor: Colors.red[400]!,
-                                  margin: EdgeInsets.all(16),
+                                  margin: const EdgeInsets.all(16),
                                   borderRadius: BorderRadius.circular(12),
-                                  duration: Duration(seconds: 3),
+                                  duration: const Duration(seconds: 3),
                                   flushbarPosition: FlushbarPosition.TOP,
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.error_outline,
                                     color: Colors.white,
                                   ),
@@ -127,12 +147,6 @@ class LoginView extends StatelessWidget {
                                     context,
                                     '/orang_tua',
                                   );
-                                  // Navigator.pushReplacement(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => MapsView(),
-                                  //   ),
-                                  // );
                                 } else if (loginViewModel.role == 'admin') {
                                   Navigator.pushReplacementNamed(
                                     context,
@@ -142,7 +156,7 @@ class LoginView extends StatelessWidget {
                               }
                             },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF1565C0),
+                      backgroundColor: const Color(0xFF1565C0),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -151,7 +165,7 @@ class LoginView extends StatelessWidget {
                     ),
                     child:
                         loginViewModel.isLoading
-                            ? SizedBox(
+                            ? const SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
@@ -167,6 +181,31 @@ class LoginView extends StatelessWidget {
                               ),
                             ),
                   ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Tombol pindah ke halaman Register
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Belum punya akun?",
+                      style: TextStyle(color: Colors.black87),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/register');
+                      },
+                      child: const Text(
+                        "Daftar",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

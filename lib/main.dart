@@ -6,12 +6,17 @@ import 'package:molita_flutter/viewmodels/common/login_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/detail_anak_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/edukasi_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/kategori_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/lupa_password_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/maps_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/menu_viewmodel.dart';
-import 'package:molita_flutter/viewmodels/common/register_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/password_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/pengaduan_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/penjadwalan_viewmodal.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/pertumbuhan_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/profile_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/register_viewmodel.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/theme_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -41,6 +46,11 @@ class MolitaApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => EdukasiViewModel()),
         ChangeNotifierProvider(create: (_) => ProfileViewModel()),
         ChangeNotifierProvider(create: (_) => DetailAnakViewModel()),
+        ChangeNotifierProvider(create: (_) => ThemeViewModel()),
+        ChangeNotifierProvider(create: (_) => PengaduanViewModel()),
+        ChangeNotifierProvider(create: (_) => KategoriViewModel()),
+        ChangeNotifierProvider(create: (_) => PasswordViewModel()),
+        ChangeNotifierProvider(create: (_) => LupaPasswordViewModel()),
       ],
       child: MaterialApp(
         title: 'Molita',

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:molita_flutter/core/constants/api_constant.dart';
+import 'package:molita_flutter/core/constants/app_constant.dart';
 import 'package:molita_flutter/models/orang_tua/artikel_edukasi_model.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -79,7 +79,7 @@ class ArtikelDetailScreen extends StatelessWidget {
     return Hero(
       tag: artikel.idArtikel,
       child: Image.network(
-        '${ApiConstant.baseUrl}storage/${artikel.thumbnail}',
+        '${AppConstant.baseUrl}storage/${artikel.thumbnail}',
         fit: BoxFit.cover,
         loadingBuilder: (context, child, progress) {
           if (progress == null) return child;

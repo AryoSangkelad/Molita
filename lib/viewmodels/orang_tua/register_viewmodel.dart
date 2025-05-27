@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:molita_flutter/core/services/AuthService.dart';
 import 'package:molita_flutter/models/common/register_model.dart';
 
 class RegisterViewModel extends ChangeNotifier {
@@ -6,12 +9,15 @@ class RegisterViewModel extends ChangeNotifier {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final AuthService _authService = AuthService();
 
   bool _isPasswordHidden = true;
   bool _isConfirmPasswordHidden = true;
+  bool _loading = false;
 
   bool get isPasswordHidden => _isPasswordHidden;
   bool get isConfirmPasswordHidden => _isConfirmPasswordHidden;
+  bool get loading => _loading;
 
   void togglePasswordVisibility() {
     _isPasswordHidden = !_isPasswordHidden;
@@ -23,9 +29,9 @@ class RegisterViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void register(BuildContext context) {
-    final email = emailController.text;
-    final username = usernameController.text;
+  Future<String?> register() async {
+    final email = emailController.text.trim();
+    final username = usernameController.text.trim();
     final password = passwordController.text;
     final confirmPassword = confirmPasswordController.text;
 
@@ -33,30 +39,33 @@ class RegisterViewModel extends ChangeNotifier {
         username.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Semua field harus diisi')));
-      return;
+      return 'Semua field harus diisi';
     }
 
     if (password != confirmPassword) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Password tidak cocok')));
-      return;
+      return 'Password dan konfirmasi password tidak sama';
     }
 
-    final newUser = RegisterModel(
-      email: email,
-      username: username,
-      password: password,
-    );
+    _loading = true;
+    notifyListeners();
 
-    debugPrint("User registered: ${newUser.toJson()}");
+    try {
+      final registerData = RegisterModel(
+        email: email,
+        username: username,
+        password: password,
+      );
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Registrasi berhasil!')));
+      final message = await _authService.register(registerData);
+
+      _loading = false;
+      notifyListeners();
+      return message;
+    } catch (e) {
+      _loading = false;
+      notifyListeners();
+      return e.toString();
+    }
   }
 
   @override
