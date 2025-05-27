@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:molita_flutter/core/constants/api_constant.dart';
+import 'package:molita_flutter/core/constants/app_constant.dart';
 import 'package:molita_flutter/models/orang_tua/artikel_edukasi_model.dart';
 import 'package:molita_flutter/models/orang_tua/video_edukasi_model.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/edukasi_viewmodel.dart';
@@ -20,7 +20,6 @@ class _EdukasiViewState extends State<EdukasiView> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_isInitialized) {
         final viewModel = Provider.of<EdukasiViewModel>(context, listen: false);
@@ -33,229 +32,283 @@ class _EdukasiViewState extends State<EdukasiView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<EdukasiViewModel>(context);
+    final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 1,
         title: Text(
           'Edukasi Molita',
           style: TextStyle(
-            color: Colors.blue[800],
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+            color: primaryColor,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
+            letterSpacing: -0.5,
           ),
         ),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Row(
-                  children: [
-                    Icon(Icons.search, color: Colors.grey[600]),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Cari materi edukasi...',
-                          border: InputBorder.none,
-                          hintStyle: TextStyle(color: Colors.grey[600]),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
+        // bottom: PreferredSize(
+        //   preferredSize: const Size.fromHeight(80),
+        //   child: Padding(
+        //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        //     child: Material(
+        //       elevation: 2,
+        //       borderRadius: BorderRadius.circular(16),
+        //       child: TextField(
+        //         decoration: InputDecoration(
+        //           filled: true,
+        //           fillColor: Colors.white,
+        //           hintText: 'Cari materi edukasi...',
+        //           prefixIcon: Icon(
+        //             Icons.search_rounded,
+        //             color: Colors.grey[600],
+        //           ),
+        //           border: OutlineInputBorder(
+        //             borderRadius: BorderRadius.circular(16),
+        //             borderSide: BorderSide.none,
+        //           ),
+        //           contentPadding: const EdgeInsets.symmetric(vertical: 14),
+        //           hintStyle: TextStyle(color: Colors.grey[600], fontSize: 15),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Toggle Button
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
                 children: [
-                  ToggleButton(
-                    isSelected: viewModel.selectedType == 'Semua',
-                    onPressed: () => viewModel.setSelectedType('Semua'),
-                    icon: Icons.dashboard,
-                    label: 'Semua',
-                  ),
-                  ToggleButton(
-                    isSelected: viewModel.selectedType == 'video',
-                    onPressed: () => viewModel.setSelectedType('video'),
-                    icon: Icons.video_library,
-                    label: 'Video',
-                  ),
-                  ToggleButton(
-                    isSelected: viewModel.selectedType == 'artikel',
-                    onPressed: () => viewModel.setSelectedType('artikel'),
-                    icon: Icons.article,
-                    label: 'Artikel',
-                  ),
+                  _buildFilterSection(primaryColor, viewModel),
+                  const SizedBox(height: 20),
+                  _buildCategoryFilter(primaryColor, viewModel),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
-            SizedBox(height: 20),
-            // Category Dropdown
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                children: [
-                  Icon(Icons.category, color: Colors.blue[800], size: 18),
-                  SizedBox(width: 8),
-                  Text(
-                    'Kategori:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: DropdownButton<String>(
-                        value: viewModel.selectedCategory,
-                        isExpanded: true,
-                        underline: SizedBox(),
-                        icon: Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.blue[800],
-                        ),
-                        style: TextStyle(color: Colors.black, fontSize: 14),
-                        onChanged: (String? newValue) {
-                          if (newValue != null) {
-                            viewModel.setSelectedCategory(newValue);
-                          }
-                        },
-                        items: [
-                          DropdownMenuItem(
-                            value: 'Semua',
-                            child: Text('Semua'),
-                          ),
-                          ...viewModel.categories.map(
-                            (category) => DropdownMenuItem(
-                              value: category.judul,
-                              child: Text(category.judul),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            // Content Grid
-            if (viewModel.getFilteredItems().isEmpty)
-              Center(child: Text('Tidak ada konten ditemukan'))
-            else
-              GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.75,
-                ),
-                itemCount: viewModel.getFilteredItems().length,
-                itemBuilder: (context, index) {
-                  final item = viewModel.getFilteredItems()[index];
-                  return EdukasiCard(
-                    item: item,
-                    onTap: () {
-                      if (item is ArtikelEdukasi) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => ArtikelDetailScreen(artikel: item),
-                          ),
-                        );
-                      } else if (item is VideoEdukasi) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => VideoDetailScreen(video: item),
-                          ),
-                        );
-                      }
-                    },
-                  );
-                },
-              ),
+            _buildContentGrid(viewModel),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildFilterSection(Color primaryColor, EdukasiViewModel viewModel) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: const Color.fromARGB(255, 228, 228, 228),
+          width: 1.5,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Row(
+          children: [
+            _FilterChip(
+              label: 'Semua',
+              icon: Icons.widgets_rounded,
+              isSelected: viewModel.selectedType == 'Semua',
+              onTap: () => viewModel.setSelectedType('Semua'),
+            ),
+            _FilterChip(
+              label: 'Video',
+              icon: Icons.play_circle_fill_rounded,
+              isSelected: viewModel.selectedType == 'video',
+              onTap: () => viewModel.setSelectedType('video'),
+              color: Colors.red,
+            ),
+            _FilterChip(
+              label: 'Artikel',
+              icon: Icons.article_rounded,
+              isSelected: viewModel.selectedType == 'artikel',
+              onTap: () => viewModel.setSelectedType('artikel'),
+              color: Colors.green,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryFilter(Color primaryColor, EdukasiViewModel viewModel) {
+    return Row(
+      children: [
+        Icon(Icons.category_rounded, color: primaryColor, size: 20),
+        const SizedBox(width: 8),
+        Text(
+          'Kategori:',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[700],
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Material(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
+            elevation: 1,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: DropdownButton<String>(
+                value: viewModel.selectedCategory,
+                isExpanded: true,
+                underline: const SizedBox(),
+                icon: Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: primaryColor,
+                ),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[800],
+                  fontWeight: FontWeight.w500,
+                ),
+                onChanged: (String? newValue) {
+                  if (newValue != null) viewModel.setSelectedCategory(newValue);
+                },
+                items: [
+                  DropdownMenuItem(
+                    value: 'Semua',
+                    child: Text(
+                      'Semua Kategori',
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                  ),
+                  ...viewModel.categories.map(
+                    (category) => DropdownMenuItem(
+                      value: category.judul,
+                      child: Text(category.judul),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContentGrid(EdukasiViewModel viewModel) {
+    final items = viewModel.getFilteredItems();
+
+    return items.isEmpty
+        ? SliverFillRemaining(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.search_off_rounded,
+                  size: 60,
+                  color: Colors.grey[400],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Tidak ada konten ditemukan',
+                  style: TextStyle(color: Colors.grey[500], fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+        )
+        : SliverGrid(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 20,
+            crossAxisSpacing: 20,
+            childAspectRatio: 0.75,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (context, index) => EdukasiCard(
+              item: items[index],
+              onTap: () => _navigateToDetail(context, items[index]),
+            ),
+            childCount: items.length,
+          ),
+        );
+  }
+
+  void _navigateToDetail(BuildContext context, dynamic item) {
+    if (item is ArtikelEdukasi) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ArtikelDetailScreen(artikel: item),
+        ),
+      );
+    } else if (item is VideoEdukasi) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => VideoDetailScreen(video: item)),
+      );
+    }
+  }
 }
 
-class ToggleButton extends StatelessWidget {
-  final bool isSelected;
-  final VoidCallback onPressed;
-  final IconData icon;
+class _FilterChip extends StatelessWidget {
   final String label;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final Color? color;
 
-  const ToggleButton({
-    Key? key,
-    required this.isSelected,
-    required this.onPressed,
-    required this.icon,
+  const _FilterChip({
     required this.label,
-  }) : super(key: key);
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = color ?? theme.primaryColor;
+
     return Expanded(
-      child: GestureDetector(
-        onTap: onPressed,
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: isSelected ? Colors.blue[100] : Colors.transparent,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 18,
-                color: isSelected ? Colors.blue[800] : Colors.grey[600],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: Material(
+          color:
+              isSelected ? primaryColor.withOpacity(0.15) : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
               ),
-              SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: isSelected ? Colors.blue[800] : Colors.grey[600],
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    icon,
+                    size: 18,
+                    color: isSelected ? primaryColor : Colors.grey[600],
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: isSelected ? primaryColor : Colors.grey[600],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -272,74 +325,151 @@ class EdukasiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String thumbnailUrl = '';
-    String title = '';
-    String typeLabel = '';
-    Color typeColor = Colors.transparent;
+    final theme = Theme.of(context);
+    bool isVideo = item is VideoEdukasi;
+    String thumbnailUrl =
+        '${AppConstant.baseUrl}storage/${isVideo ? (item as VideoEdukasi).thumbnail : (item as ArtikelEdukasi).thumbnail}';
+    String title =
+        isVideo ? (item as VideoEdukasi).judul : (item as ArtikelEdukasi).judul;
 
-    if (item is ArtikelEdukasi) {
-      thumbnailUrl = '${ApiConstant.baseUrl}storage/${item.thumbnail}';
-      title = item.judul;
-      typeLabel = 'Artikel';
-      typeColor = Colors.green[100]!;
-    } else if (item is VideoEdukasi) {
-      thumbnailUrl = '${ApiConstant.baseUrl}storage/${item.thumbnail}';
-      title = item.judul;
-      typeLabel = 'Video';
-      typeColor = Colors.red[100]!;
-    }
-
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-              child: Image.network(
-                thumbnailUrl,
-                height: 120,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: typeColor,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Text(
-                      typeLabel,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color:
-                            typeLabel == 'Video'
-                                ? Colors.red[800]
-                                : Colors.green[800],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            children: [
+              _buildThumbnail(thumbnailUrl),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: _buildContentOverlay(isVideo, title, theme),
+              ),
+              Positioned(top: 12, right: 12, child: _buildTypeBadge(isVideo)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThumbnail(String url) {
+    return Image.network(
+      url,
+      width: double.infinity,
+      height: double.infinity,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) return child;
+        return Container(
+          color: Colors.grey[200],
+          child: Center(
+            child: CircularProgressIndicator(
+              value:
+                  progress.expectedTotalBytes != null
+                      ? progress.cumulativeBytesLoaded /
+                          progress.expectedTotalBytes!
+                      : null,
+              strokeWidth: 2,
+            ),
+          ),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          color: Colors.grey[200],
+          child: const Center(
+            child: Icon(Icons.broken_image_rounded, color: Colors.grey),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildContentOverlay(bool isVideo, String title, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              height: 1.3,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(
+                isVideo
+                    ? Icons.play_circle_filled_rounded
+                    : Icons.article_rounded,
+                color: Colors.white70,
+                size: 14,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                isVideo ? 'Video Edukasi' : 'Artikel',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: Colors.white70,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTypeBadge(bool isVideo) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: isVideo ? Colors.red[400] : Colors.green[400],
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isVideo ? Icons.play_arrow_rounded : Icons.article_rounded,
+            color: Colors.white,
+            size: 14,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            isVideo ? 'VIDEO' : 'ARTICLE',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
       ),
     );
   }

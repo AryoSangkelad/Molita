@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:molita_flutter/core/constants/api_constant.dart';
+import 'package:molita_flutter/core/constants/app_constant.dart';
 import 'package:molita_flutter/models/orang_tua/anak_model.dart';
 import 'package:molita_flutter/models/orang_tua/jadwal_imunisasi.dart';
 import 'package:molita_flutter/models/orang_tua/jadwal_posyandu.dart';
@@ -12,7 +12,7 @@ class PenjadwalanService {
   // Mock API untuk imunisasi
   Future<List<Anak>> getAnakList(String userId) async {
     final response = await http.get(
-      Uri.parse('${ApiConstant.baseUrlApi}/anak/orang-tua/$userId'),
+      Uri.parse('${AppConstant.baseUrlApi}/anak/orang-tua/$userId'),
     );
 
     if (response.statusCode == 200) {
@@ -25,7 +25,7 @@ class PenjadwalanService {
 
   Future<List<JadwalImunisasi>> getJadwalImunisasi(String idAnak) async {
     final response = await http.get(
-      Uri.parse('${ApiConstant.baseUrlApi}/imunisasi/$idAnak'),
+      Uri.parse('${AppConstant.baseUrlApi}/imunisasi/$idAnak'),
     );
 
     if (response.statusCode == 200) {
@@ -37,24 +37,32 @@ class PenjadwalanService {
       var daftarDaftar = data['data'] as List;
 
       for (var daftar in daftarDaftar) {
-        String idJadwal = daftar['id_jadwal_imunisasi'];
+        String idJadwal = daftar['id_jadwal_imunisasi'] ?? '';
+
         var jadwal = daftarJadwal.firstWhere(
           (j) => j['id_jadwal_imunisasi'] == idJadwal,
           orElse: () => null,
         );
 
         if (jadwal != null) {
-          jadwalList.add(
-            JadwalImunisasi(
-              id: jadwal['id_jadwal_imunisasi'],
-              vaksin: "Vaksin ${jadwal['id_jadwal_imunisasi']}",
-              usiaPemberian: jadwal['usia_pemberian'],
-              tanggal: DateTime.parse(jadwal['tanggal_imunisasi']),
-              statusImunisasi: jadwal['status_imunisasi'],
-              namaBidan: jadwal['nama_bidan'],
-              alamat: jadwal['alamat'],
-            ),
-          );
+          try {
+            jadwalList.add(
+              JadwalImunisasi(
+                id: jadwal['id_jadwal_imunisasi'] ?? '',
+                namaImunisasi: "${jadwal['nama_imunisasi'] ?? '-'}",
+                usiaPemberian: jadwal['usia_pemberian'] ?? 0,
+                tanggal:
+                    jadwal['tanggal_imunisasi'] != null
+                        ? DateTime.parse(jadwal['tanggal_imunisasi'])
+                        : DateTime.now(),
+                statusImunisasi: jadwal['status_imunisasi'] ?? '-',
+                namaBidan: jadwal['nama_bidan'] ?? '-',
+                alamat: jadwal['alamat'] ?? '-',
+              ),
+            );
+          } catch (e) {
+            print('Gagal parsing jadwal imunisasi: $e');
+          }
         }
       }
 
@@ -65,7 +73,7 @@ class PenjadwalanService {
   }
 
   Future<List<JadwalPosyandu>> getJadwalPosyandu(String idJenis) async {
-    final url = Uri.parse('${ApiConstant.baseUrlApi}/jadwal-posyandu/$idJenis');
+    final url = Uri.parse('${AppConstant.baseUrlApi}/jadwal-posyandu/$idJenis');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -102,6 +110,54 @@ class PenjadwalanService {
       return jadwalList;
     } else {
       throw Exception('Gagal mengambil data jadwal posyandu');
+    }
+  }
+
+  Future<JadwalPosyandu?> getJadwalTerdekat(String idJenis) async {
+    final url = Uri.parse('${AppConstant.baseUrlApi}/jadwal-terdekat/$idJenis');
+    final response = await http.get(url);
+
+    print('Status Code: ${response.statusCode}');
+    print('Response Body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final item = data['data'];
+
+      if (item == null) {
+        return null; // tidak ada jadwal
+      }
+
+      String alamat = data['jenis_posyandu']?['alamat'] ?? '-';
+
+      String jamMulaiStr = item['jam_mulai'] ?? '00:00';
+      String jamSelesaiStr = item['jam_selesai'] ?? '00:00';
+
+      List<String> waktuMulai = jamMulaiStr.split(":");
+      List<String> waktuSelesai = jamSelesaiStr.split(":");
+
+      return JadwalPosyandu(
+        id: item['id_jadwal_posyandu'] ?? '',
+        kegiatan: item['kegiatan'] ?? '-',
+        tanggal:
+            item['tanggal'] != null
+                ? DateTime.tryParse(item['tanggal']) ?? DateTime.now()
+                : DateTime.now(),
+        jamMulai: TimeOfDay(
+          hour: int.tryParse(waktuMulai[0]) ?? 0,
+          minute: int.tryParse(waktuMulai[1]) ?? 0,
+        ),
+        jamSelesai: TimeOfDay(
+          hour: int.tryParse(waktuSelesai[0]) ?? 0,
+          minute: int.tryParse(waktuSelesai[1]) ?? 0,
+        ),
+        catatan: item['catatan'] ?? '-',
+        lokasi: alamat,
+      );
+    } else if (response.statusCode == 404) {
+      return null; // anggap tidak ada jadwal
+    } else {
+      throw Exception('Gagal mengambil jadwal posyandu terdekat');
     }
   }
 }

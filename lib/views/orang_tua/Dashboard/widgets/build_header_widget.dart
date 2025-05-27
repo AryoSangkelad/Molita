@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:molita_flutter/core/constants/app_constant.dart';
+import 'package:molita_flutter/models/orang_tua/orang_tua_model.dart';
 
-Widget buildHeader(BuildContext context, String username) {
+Widget buildHeader(BuildContext context, OrangTua orangTua) {
   final screenHeight = MediaQuery.of(context).size.height;
-  final headerHeight = screenHeight * 0.25; // 25% dari tinggi layar
-  final circleSize = headerHeight * 0.8; // ukuran lingkaran proporsional
+  final headerHeight = screenHeight * 0.20; // 25% dari tinggi layar
+  final circleSize = headerHeight * 0.9; // ukuran lingkaran proporsional
 
   return Container(
     height: headerHeight,
@@ -34,7 +36,7 @@ Widget buildHeader(BuildContext context, String username) {
           padding: EdgeInsets.only(
             left: 24,
             right: 24,
-            bottom: headerHeight * 0.55,
+            bottom: headerHeight * 0.47,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -46,7 +48,7 @@ Widget buildHeader(BuildContext context, String username) {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    "Hai, $username",
+                    "Hai, ${orangTua.namaIbu}",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -67,14 +69,14 @@ Widget buildHeader(BuildContext context, String username) {
               ),
 
               // Avatar pengguna
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 30,
                 backgroundColor: Colors.white,
                 child: CircleAvatar(
                   radius: 26,
-                  backgroundImage: AssetImage(
-                    'assets/images/avatar.png',
-                  ), // ganti jika belum ada
+                  backgroundImage: NetworkImage(
+                    "${AppConstant.baseUrl}storage/${orangTua.img}",
+                  ),
                 ),
               ),
             ],

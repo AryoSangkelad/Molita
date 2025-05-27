@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:molita_flutter/core/constants/api_constant.dart';
-import 'package:molita_flutter/viewmodels/orang_tua/edukasi_viewmodel.dart';
+import 'package:molita_flutter/core/constants/app_constant.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
 import 'package:molita_flutter/views/orang_tua/Edukasi/video_detail_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-Widget buildVideoTerbaru(EdukasiViewModel viewModel) {
+Widget buildVideoTerbaru(DashboardViewModel viewModel) {
   return _VideoTerbaruSlider(viewModel: viewModel);
 }
 
 class _VideoTerbaruSlider extends StatefulWidget {
-  final EdukasiViewModel viewModel;
+  final DashboardViewModel viewModel;
 
   const _VideoTerbaruSlider({super.key, required this.viewModel});
 
@@ -80,7 +80,7 @@ class _VideoTerbaruSliderState extends State<_VideoTerbaruSlider> {
           const Center(child: Text("Belum ada video."))
         else
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.24,
+            height: MediaQuery.of(context).size.height * 0.26,
             child: PageView.builder(
               controller: _controller,
               itemCount: videoList.length,
@@ -110,7 +110,7 @@ class _VideoTerbaruSliderState extends State<_VideoTerbaruSlider> {
                               topRight: Radius.circular(16),
                             ),
                             child: Image.network(
-                              '${ApiConstant.baseUrl}storage/${info.thumbnail}',
+                              '${AppConstant.baseUrl}storage/${info.thumbnail}',
                               height: 120,
                               width: double.infinity,
                               fit: BoxFit.cover,

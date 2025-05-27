@@ -39,52 +39,53 @@ class _PenjadwalanViewState extends State<PenjadwalanView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<PenjadwalanViewModal>(context);
+    final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: SizedBox(),
-        leadingWidth: 10,
+        elevation: 1,
         title: Text(
           'Penjadwalan',
           style: TextStyle(
-            color: Colors.blue[800],
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+            color: primaryColor,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
+            letterSpacing: -0.5,
           ),
         ),
         centerTitle: false,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Row(
-                  children: [
-                    Icon(Icons.search, color: Colors.grey[600]),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Cari Jadwal...',
-                          border: InputBorder.none,
-                          hintStyle: TextStyle(color: Colors.grey[600]),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
+        // bottom: PreferredSize(
+        //   preferredSize: Size.fromHeight(60),
+        //   child: Padding(
+        //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        //     child: Container(
+        //       decoration: BoxDecoration(
+        //         color: Colors.grey[200],
+        //         borderRadius: BorderRadius.circular(12),
+        //       ),
+        //       child: Padding(
+        //         padding: const EdgeInsets.symmetric(horizontal: 12),
+        //         child: Row(
+        //           children: [
+        //             Icon(Icons.search, color: Colors.grey[600]),
+        //             SizedBox(width: 8),
+        //             Expanded(
+        //               child: TextField(
+        //                 decoration: InputDecoration(
+        //                   hintText: 'Cari Jadwal...',
+        //                   border: InputBorder.none,
+        //                   hintStyle: TextStyle(color: Colors.grey[600]),
+        //                 ),
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -93,10 +94,14 @@ class _PenjadwalanViewState extends State<PenjadwalanView> {
           children: [
             // Toggle Jenis Jadwal
             Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(25),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: const Color.fromARGB(255, 228, 228, 228),
+                  width: 1.5,
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -113,12 +118,13 @@ class _PenjadwalanViewState extends State<PenjadwalanView> {
                               ),
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 8),
+
                             decoration: BoxDecoration(
                               color:
                                   isSelected
                                       ? Colors.blue[100]
                                       : Colors.transparent,
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -274,7 +280,7 @@ Widget _buildImunisasiContent(PenjadwalanViewModal viewModel) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item.vaksin,
+                        item.namaImunisasi,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 16,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:molita_flutter/core/constants/api_constant.dart';
-import 'package:molita_flutter/viewmodels/orang_tua/edukasi_viewmodel.dart';
+import 'package:molita_flutter/core/constants/app_constant.dart';
+import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
 import 'package:molita_flutter/views/orang_tua/Edukasi/artikel_detail_screen.dart';
 
-Widget buildArtikelTerbaru(BuildContext context, EdukasiViewModel viewModel) {
+Widget buildArtikelTerbaru(BuildContext context, DashboardViewModel viewModel) {
   final artikelList = viewModel.getArtikelOnly();
 
   return Padding(
@@ -20,7 +20,7 @@ Widget buildArtikelTerbaru(BuildContext context, EdukasiViewModel viewModel) {
         ),
         SizedBox(height: 12),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.35,
+          height: MediaQuery.of(context).size.height * 0.40,
           child:
               artikelList.isEmpty
                   ? Center(child: Text("Belum ada artikel."))
@@ -50,7 +50,7 @@ Widget buildArtikelTerbaru(BuildContext context, EdukasiViewModel viewModel) {
                                   topRight: Radius.circular(16),
                                 ),
                                 child: Image.network(
-                                  '${ApiConstant.baseUrl}storage/${item.thumbnail}',
+                                  '${AppConstant.baseUrl}storage/${item.thumbnail}',
                                   height: 120,
                                   width: double.infinity,
                                   fit: BoxFit.cover,

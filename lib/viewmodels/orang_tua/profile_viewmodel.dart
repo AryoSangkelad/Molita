@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:molita_flutter/core/services/OrangTuaService.dart';
 import 'package:molita_flutter/models/orang_tua/orang_tua_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileViewModel with ChangeNotifier {
   OrangTua? _orangTua;
@@ -21,6 +22,7 @@ class ProfileViewModel with ChangeNotifier {
     try {
       final updated = await OrangTuaService().updateProfile(id, data);
       _orangTua = updated;
+      loadOrangTua(id);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -47,9 +49,30 @@ class ProfileViewModel with ChangeNotifier {
           img: newImageUrl,
         );
       }
+      loadOrangTua(id);
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> loadOrangTua(String? id) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final orangTuaData = await OrangTuaService().fetchOrangTua(id!);
+      _orangTua = orangTuaData;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Menghapus semua data yang tersimpan
+    _orangTua = null;
+    notifyListeners();
   }
 }

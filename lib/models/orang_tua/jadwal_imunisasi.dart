@@ -1,7 +1,7 @@
 class JadwalImunisasi {
   final String id;
-  final String vaksin;
-  final int usiaPemberian; // dalam bulan
+  final String namaImunisasi;
+  final int usiaPemberian; 
   final DateTime tanggal;
   final String statusImunisasi;
   final String namaBidan;
@@ -9,7 +9,7 @@ class JadwalImunisasi {
 
   JadwalImunisasi({
     required this.id,
-    required this.vaksin,
+    required this.namaImunisasi,
     required this.usiaPemberian,
     required this.tanggal,
     required this.statusImunisasi,

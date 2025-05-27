@@ -70,7 +70,7 @@ class DetailJadwalBottomSheet extends StatelessWidget {
 
   List<Widget> _buildImunisasiDetail(JadwalImunisasi item) {
     return [
-      _infoTile(Icons.vaccines, "Vaksin", item.vaksin),
+      _infoTile(Icons.vaccines, "Imunisasi", item.namaImunisasi),
       _infoTile(Icons.cake, "Usia", "${item.usiaPemberian} bulan"),
       _infoTile(Icons.calendar_today, "Tanggal", _formatTanggal(item.tanggal)),
       _infoTile(Icons.verified, "Status", item.statusImunisasi),
