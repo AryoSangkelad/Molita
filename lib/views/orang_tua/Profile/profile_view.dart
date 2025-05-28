@@ -43,6 +43,7 @@ class _ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         flexibleSpace: Container(
           decoration: BoxDecoration(gradient: _blueGradient),
         ),

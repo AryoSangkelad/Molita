@@ -37,6 +37,7 @@ class _EdukasiViewState extends State<EdukasiView> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 1,
         title: Text(

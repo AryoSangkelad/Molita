@@ -10,6 +10,7 @@ class DetailAnakView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           'Detail Anak',
           style: TextStyle(
