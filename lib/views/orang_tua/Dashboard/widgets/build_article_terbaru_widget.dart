@@ -50,7 +50,7 @@ Widget buildArtikelTerbaru(BuildContext context, DashboardViewModel viewModel) {
                                   topRight: Radius.circular(16),
                                 ),
                                 child: Image.network(
-                                  '${AppConstant.baseUrl}storage/${item.thumbnail}',
+                                  '${AppConstant.baseUrlFoto}${item.thumbnail}',
                                   height: 120,
                                   width: double.infinity,
                                   fit: BoxFit.cover,

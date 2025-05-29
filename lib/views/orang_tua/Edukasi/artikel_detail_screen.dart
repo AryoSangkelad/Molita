@@ -79,7 +79,7 @@ class ArtikelDetailScreen extends StatelessWidget {
     return Hero(
       tag: artikel.idArtikel,
       child: Image.network(
-        '${AppConstant.baseUrl}storage/${artikel.thumbnail}',
+        '${AppConstant.baseUrlFoto}${artikel.thumbnail}',
         fit: BoxFit.cover,
         loadingBuilder: (context, child, progress) {
           if (progress == null) return child;

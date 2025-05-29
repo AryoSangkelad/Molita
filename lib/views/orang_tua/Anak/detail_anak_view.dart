@@ -62,7 +62,7 @@ class DetailAnakView extends StatelessWidget {
                     _buildInfoItem("Nama Lengkap", anak.nama),
                     _buildInfoItem(
                       "Tanggal Lahir",
-                      dateFormat.format(anak.tanggalLahir),
+                      dateFormat.format(anak.tanggalLahir!),
                     ),
                     _buildInfoItem("Jenis Kelamin", anak.jenisKelamin),
                   ],

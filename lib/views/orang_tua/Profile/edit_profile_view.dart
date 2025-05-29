@@ -186,7 +186,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                           radius: 60,
                           backgroundColor: Colors.blue.shade100,
                           backgroundImage: NetworkImage(
-                            "${AppConstant.baseUrl}storage/${_viewModel.orangTua?.img ?? widget.orangTua.img}",
+                            "${AppConstant.baseUrlFoto}${_viewModel.orangTua?.img ?? widget.orangTua.img}",
                           ),
                         ),
                       ),

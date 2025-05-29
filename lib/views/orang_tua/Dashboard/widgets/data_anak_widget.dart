@@ -97,7 +97,7 @@ Widget buildDataAnak(BuildContext context, DashboardViewModel viewModel) {
                         DateFormat(
                           'dd MMMM yyyy',
                           'id_ID',
-                        ).format(child.tanggalLahir),
+                        ).format(child.tanggalLahir!),
                         style: TextStyle(
                           color: Colors.grey.shade700,
                           fontSize: 14,

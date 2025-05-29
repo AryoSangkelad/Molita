@@ -44,6 +44,7 @@ class _PenjadwalanViewState extends State<PenjadwalanView> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 1,
         title: Text(

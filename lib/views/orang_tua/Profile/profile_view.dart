@@ -43,6 +43,7 @@ class _ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         flexibleSpace: Container(
           decoration: BoxDecoration(gradient: _blueGradient),
         ),
@@ -134,7 +135,7 @@ class _ProfileViewState extends State<ProfileView> {
                           child: CircleAvatar(
                             radius: 60,
                             backgroundImage: NetworkImage(
-                              "${AppConstant.baseUrl}storage/${viewModel.orangTua!.img}",
+                              "${AppConstant.baseUrlFoto}${viewModel.orangTua!.img}",
                             ),
                           ),
                         ),
@@ -301,21 +302,36 @@ class _ProfileViewState extends State<ProfileView> {
   Future<void> _pickImage(String? idOrangTua) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
     if (pickedFile != null) {
       final ProfileViewModel viewModel = Provider.of<ProfileViewModel>(
         context,
         listen: false,
       );
-      await viewModel.uploadNewPhoto(idOrangTua!, pickedFile.path);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Foto berhasil diunggah'),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+
+      try {
+        await viewModel.uploadNewPhoto(idOrangTua!, pickedFile.path);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Foto berhasil diunggah'),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
-        ),
-      );
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal mengunggah foto: $e'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
     }
   }
 

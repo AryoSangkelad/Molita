@@ -110,7 +110,7 @@ class _VideoTerbaruSliderState extends State<_VideoTerbaruSlider> {
                               topRight: Radius.circular(16),
                             ),
                             child: Image.network(
-                              '${AppConstant.baseUrl}storage/${info.thumbnail}',
+                              '${AppConstant.baseUrlFoto}${info.thumbnail}',
                               height: 120,
                               width: double.infinity,
                               fit: BoxFit.cover,

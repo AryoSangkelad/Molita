@@ -28,87 +28,100 @@ class _KeamananAkunViewState extends State<KeamananAkunView> {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Ganti Password',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.primaryColorDark,
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              _buildPasswordField(
-                context,
-                controller: currentPasswordController,
-                label: 'Password Saat Ini',
-                hint: 'Masukkan password Anda yang sekarang',
-                icon: Icons.lock_outline,
-              ),
-              const SizedBox(height: 20),
-
-              _buildPasswordField(
-                context,
-                controller: newPasswordController,
-                label: 'Password Baru',
-                hint: 'Masukkan password baru (min. 6 karakter)',
-                icon: Icons.lock_reset,
-              ),
-              const SizedBox(height: 20),
-
-              _buildPasswordField(
-                context,
-                controller: confirmPasswordController,
-                label: 'Konfirmasi Password Baru',
-                hint: 'Ulangi password baru Anda',
-                icon: Icons.lock_clock_outlined,
-              ),
-              const SizedBox(height: 32),
-
-              if (passwordVM.isLoading)
-                Center(
-                  child: Column(
-                    children: [
-                      const CircularProgressIndicator(),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Memproses perubahan...',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.disabledColor,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Ganti Password',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.primaryColorDark,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              else
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _submitForm,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.primaryColor,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      'SIMPAN PERUBAHAN',
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: Colors.white,
-                        letterSpacing: 1.2,
-                      ),
+                        const SizedBox(height: 24),
+
+                        _buildPasswordField(
+                          context,
+                          controller: currentPasswordController,
+                          label: 'Password Saat Ini',
+                          hint: 'Masukkan password Anda yang sekarang',
+                          icon: Icons.lock_outline,
+                        ),
+                        const SizedBox(height: 20),
+
+                        _buildPasswordField(
+                          context,
+                          controller: newPasswordController,
+                          label: 'Password Baru',
+                          hint: 'Masukkan password baru (min. 6 karakter)',
+                          icon: Icons.lock_reset,
+                        ),
+                        const SizedBox(height: 20),
+
+                        _buildPasswordField(
+                          context,
+                          controller: confirmPasswordController,
+                          label: 'Konfirmasi Password Baru',
+                          hint: 'Ulangi password baru Anda',
+                          icon: Icons.lock_clock_outlined,
+                        ),
+                        const SizedBox(height: 32),
+
+                        if (passwordVM.isLoading)
+                          Center(
+                            child: Column(
+                              children: [
+                                const CircularProgressIndicator(),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'Memproses perubahan...',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: theme.disabledColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        else
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _submitForm,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.primaryColor,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Text(
+                                'SIMPAN PERUBAHAN',
+                                style: theme.textTheme.labelLarge?.copyWith(
+                                  color: Colors.white,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
-            ],
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
