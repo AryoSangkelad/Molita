@@ -75,7 +75,7 @@ Widget buildHeader(BuildContext context, OrangTua orangTua) {
                 child: CircleAvatar(
                   radius: 26,
                   backgroundImage: NetworkImage(
-                    "${AppConstant.baseUrl}storage/${orangTua.img}",
+                    "${AppConstant.baseUrlFoto}${orangTua.img}",
                   ),
                 ),
               ),

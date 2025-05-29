@@ -53,7 +53,10 @@ class OrangTua {
       statusAktivasi: json['status_aktivasi'],
       tokenOrangTua: json['token_orang_tua'],
       img: json['img'],
-      idDesa: json['id_desa'],
+      idDesa:
+          json['id_desa'] != null
+              ? int.tryParse(json['id_desa'].toString())
+              : null,
       latitude:
           json['latitude'] != null
               ? double.tryParse(json['latitude'].toString())

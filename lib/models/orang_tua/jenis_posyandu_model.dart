@@ -24,11 +24,23 @@ class JenisPosyandu {
       idJenisPosyandu: json['id_jenis_posyandu'],
       pos: json['pos'],
       alamat: json['alamat'],
-      idDesa: json['id_desa'],
+      idDesa:
+          json['id_desa'] != null
+              ? int.tryParse(json['id_desa'].toString())
+              : null,
       latitude: _toDouble(json['latitude']),
       longitude: _toDouble(json['longitude']),
       desa: json['desa'] != null ? Desa.fromJson(json['desa']) : null,
     );
+  }
+
+  // Helper untuk konversi double dari dynamic (String atau num)
+  static double? _toDouble(dynamic val) {
+    if (val == null) return null;
+    if (val is double) return val;
+    if (val is int) return val.toDouble();
+    if (val is String) return double.tryParse(val);
+    return null;
   }
 
   Map<String, dynamic> toJson() {
@@ -41,13 +53,5 @@ class JenisPosyandu {
       'longitude': longitude,
       'desa': desa?.toJson(),
     };
-  }
-
-  static double? _toDouble(dynamic value) {
-    if (value == null) return null;
-    if (value is double) return value;
-    if (value is int) return value.toDouble();
-    if (value is String) return double.tryParse(value);
-    return null;
   }
 }

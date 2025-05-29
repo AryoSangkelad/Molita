@@ -26,23 +26,30 @@ class LoginViewModel extends ChangeNotifier {
 
         final data = result['data'];
         final prefs = await SharedPreferences.getInstance();
-
+        print(data);
         await prefs.setString('role', role!);
 
         // Simpan data berdasarkan role
         if (role == 'admin') {
           await prefs.setString('id_admin', data['id_admin']);
-          await prefs.setInt('id_desa', data['id_desa']);
+          await prefs.setInt(
+            'id_desa',
+            int.tryParse(data['id_desa'].toString()) ?? 0,
+          );
         } else if (role == 'orang_tua') {
           await prefs.setString('id_orang_tua', data['id_orang_tua']);
           await prefs.setString('id_jenis_posyandu', data['id_jenis_posyandu']);
-          await prefs.setInt('id_desa', data['id_desa']);
+          await prefs.setInt(
+            'id_desa',
+            int.tryParse(data['id_desa'].toString()) ?? 0,
+          );
         }
       } else {
         errorMessage = result['message'];
       }
     } catch (e) {
       errorMessage = 'Terjadi kesalahan. Silakan coba lagi. ${e}';
+      print(errorMessage);
     }
 
     isLoading = false;

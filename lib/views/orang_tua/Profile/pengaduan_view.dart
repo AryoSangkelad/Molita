@@ -58,6 +58,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:molita_flutter/core/constants/app_constant.dart';
 import 'package:molita_flutter/models/orang_tua/pengaduan_model.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/kategori_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/pengaduan_viewmodel.dart';
@@ -407,6 +408,7 @@ class _PengaduanViewState extends State<PengaduanView> {
   }
 
   void _showDetailBottomSheet(Pengaduan item) {
+    print(item.lampiranUrl);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -483,7 +485,7 @@ class _PengaduanViewState extends State<PengaduanView> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.network(
-                        item.lampiranUrl!,
+                        "${AppConstant.baseUrlFoto}${item.lampiranUrl!}",
                         width: double.infinity,
                         height: 200,
                         fit: BoxFit.cover,

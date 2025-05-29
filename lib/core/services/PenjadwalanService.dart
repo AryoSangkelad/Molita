@@ -50,7 +50,15 @@ class PenjadwalanService {
               JadwalImunisasi(
                 id: jadwal['id_jadwal_imunisasi'] ?? '',
                 namaImunisasi: "${jadwal['nama_imunisasi'] ?? '-'}",
-                usiaPemberian: jadwal['usia_pemberian'] ?? 0,
+                usiaPemberian:
+                    jadwal['usia_pemberian'] != null
+                        ? (jadwal['usia_pemberian'] is int
+                            ? jadwal['usia_pemberian']
+                            : int.tryParse(
+                                  jadwal['usia_pemberian'].toString(),
+                                ) ??
+                                0)
+                        : 0,
                 tanggal:
                     jadwal['tanggal_imunisasi'] != null
                         ? DateTime.parse(jadwal['tanggal_imunisasi'])

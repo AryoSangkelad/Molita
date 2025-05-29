@@ -4,7 +4,7 @@ import 'desa_model.dart';
 class Anak {
   final String id;
   final String nama;
-  final DateTime tanggalLahir;
+  final DateTime? tanggalLahir;
   final String alamat;
   final String jenisKelamin;
   final String? idOrangTua;
@@ -26,11 +26,17 @@ class Anak {
     return Anak(
       id: json['id_anak'],
       nama: json['nama_anak'],
-      tanggalLahir: DateTime.parse(json['tanggal_lahir']),
+      tanggalLahir:
+          json['tanggal_lahir'] != null
+              ? DateTime.tryParse(json['tanggal_lahir'])
+              : null,
       alamat: json['alamat'],
       jenisKelamin: json['jenis_kelamin'],
       idOrangTua: json['id_orang_tua'],
-      idDesa: json['id_desa'],
+      idDesa:
+          json['id_desa'] != null
+              ? int.tryParse(json['id_desa'].toString())
+              : null,
       desa: json['desa'] != null ? DesaDua.fromJson(json['desa']) : null,
     );
   }

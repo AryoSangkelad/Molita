@@ -10,7 +10,6 @@ class DetailAnakView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: const Text(
           'Detail Anak',
           style: TextStyle(
@@ -63,7 +62,7 @@ class DetailAnakView extends StatelessWidget {
                     _buildInfoItem("Nama Lengkap", anak.nama),
                     _buildInfoItem(
                       "Tanggal Lahir",
-                      dateFormat.format(anak.tanggalLahir),
+                      dateFormat.format(anak.tanggalLahir!),
                     ),
                     _buildInfoItem("Jenis Kelamin", anak.jenisKelamin),
                   ],

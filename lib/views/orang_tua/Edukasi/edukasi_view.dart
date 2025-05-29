@@ -329,7 +329,7 @@ class EdukasiCard extends StatelessWidget {
     final theme = Theme.of(context);
     bool isVideo = item is VideoEdukasi;
     String thumbnailUrl =
-        '${AppConstant.baseUrl}storage/${isVideo ? (item as VideoEdukasi).thumbnail : (item as ArtikelEdukasi).thumbnail}';
+        '${AppConstant.baseUrlFoto}${isVideo ? (item as VideoEdukasi).thumbnail : (item as ArtikelEdukasi).thumbnail}';
     String title =
         isVideo ? (item as VideoEdukasi).judul : (item as ArtikelEdukasi).judul;
 
