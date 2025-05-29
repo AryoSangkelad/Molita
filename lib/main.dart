@@ -8,7 +8,6 @@ import 'package:molita_flutter/viewmodels/orang_tua/detail_anak_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/edukasi_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/kategori_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/lupa_password_viewmodel.dart';
-import 'package:molita_flutter/viewmodels/orang_tua/maps_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/menu_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/password_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/pengaduan_viewmodel.dart';
@@ -17,14 +16,25 @@ import 'package:molita_flutter/viewmodels/orang_tua/pertumbuhan_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/profile_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/register_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/theme_viewmodel.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await initializeDateFormatting('id_ID', null);
+  await _requestLocationPermission(); // ← Meminta izin lokasi saat startup
+
   runApp(const MolitaApp());
+}
+
+Future<void> _requestLocationPermission() async {
+  var status = await Permission.location.status;
+  if (!status.isGranted) {
+    await Permission.location.request();
+  }
 }
 
 class MolitaApp extends StatelessWidget {
@@ -34,7 +44,6 @@ class MolitaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => MapsViewModel()),
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
         ChangeNotifierProvider(create: (_) => RegisterViewModel()),
@@ -55,12 +64,19 @@ class MolitaApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Molita',
         debugShowCheckedModeBanner: false,
-        initialRoute: '/',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-          primaryColor: Colors.blue,
+          useMaterial3: true,
         ),
+        initialRoute: '/',
         routes: AppRoutes.routes,
+        locale: const Locale('id', 'ID'),
+        supportedLocales: const [Locale('id', 'ID')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
       ),
     );
   }

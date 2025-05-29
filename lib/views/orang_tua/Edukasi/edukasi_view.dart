@@ -328,8 +328,7 @@ class EdukasiCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     bool isVideo = item is VideoEdukasi;
-    String thumbnailUrl =
-        '${AppConstant.baseUrlFoto}${isVideo ? (item as VideoEdukasi).thumbnail : (item as ArtikelEdukasi).thumbnail}';
+    String thumbnailUrl = getThumbnailUrl(item, isVideo);
     String title =
         isVideo ? (item as VideoEdukasi).judul : (item as ArtikelEdukasi).judul;
 
@@ -474,4 +473,37 @@ class EdukasiCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String getThumbnailUrl(dynamic item, bool isVideo) {
+  String thumbnail =
+      isVideo
+          ? (item as VideoEdukasi).thumbnail
+          : (item as ArtikelEdukasi).thumbnail;
+
+  String? urlVideo = isVideo ? (item as VideoEdukasi).urlVideo : null;
+  bool isDefault = thumbnail == 'edukasi/default.png';
+
+  // Ambil YouTube ID jika perlu
+  String? youtubeId;
+  if (isVideo && urlVideo != null && urlVideo.isNotEmpty) {
+    final regExp = RegExp(r'(?:v=|youtu\.be/|embed/)([a-zA-Z0-9_-]+)');
+    final match = regExp.firstMatch(urlVideo);
+    if (match != null) {
+      youtubeId = match.group(1);
+    }
+  }
+
+  // Gunakan thumbnail YouTube jika default dan ID ditemukan
+  if (isVideo && isDefault && youtubeId != null) {
+    return 'https://img.youtube.com/vi/$youtubeId/hqdefault.jpg';
+  }
+
+  // Jika thumbnail sudah URL penuh
+  if (Uri.tryParse(thumbnail)?.hasAbsolutePath == true) {
+    return thumbnail;
+  }
+
+  // Thumbnail lokal dari server
+  return '${AppConstant.baseUrlFoto}$thumbnail';
 }
