@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:molita_flutter/core/constants/app_constant.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
-import 'package:molita_flutter/views/orang_tua/Edukasi/video_detail_screen.dart';
+import 'package:molita_flutter/views/orang_tua/Edukasi/video_detail_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Widget buildVideoTerbaru(DashboardViewModel viewModel) {
@@ -64,7 +64,6 @@ class _VideoTerbaruSliderState extends State<_VideoTerbaruSlider> {
   @override
   Widget build(BuildContext context) {
     final videoList = widget.viewModel.getVideoOnly();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -88,6 +87,7 @@ class _VideoTerbaruSliderState extends State<_VideoTerbaruSlider> {
               itemBuilder: (context, index) {
                 final info = videoList[index];
                 final isActive = index == _currentPage;
+                print(info);
 
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
@@ -110,7 +110,7 @@ class _VideoTerbaruSliderState extends State<_VideoTerbaruSlider> {
                               topRight: Radius.circular(16),
                             ),
                             child: Image.network(
-                              '${AppConstant.baseUrlFoto}${info.thumbnail}',
+                              getThumbnailUrl(info.thumbnail, info.urlVideo),
                               height: 120,
                               width: double.infinity,
                               fit: BoxFit.cover,
@@ -160,7 +160,7 @@ class _VideoTerbaruSliderState extends State<_VideoTerbaruSlider> {
                                       MaterialPageRoute(
                                         builder:
                                             (context) =>
-                                                VideoDetailScreen(video: info),
+                                                VideoDetailView(video: info),
                                       ),
                                     );
                                   }
@@ -201,4 +201,31 @@ class _VideoTerbaruSliderState extends State<_VideoTerbaruSlider> {
       ],
     );
   }
+}
+
+String getThumbnailUrl(String thumbnail, String? urlVideo) {
+  final isDefault = thumbnail == 'edukasi/default.png';
+
+  // Cek apakah URL video valid dan ambil YouTube ID
+  String? youtubeId;
+  if (urlVideo != null && urlVideo.isNotEmpty) {
+    final regExp = RegExp(r'(?:v=|youtu\.be/|embed/)([a-zA-Z0-9_-]+)');
+    final match = regExp.firstMatch(urlVideo);
+    if (match != null) {
+      youtubeId = match.group(1);
+    }
+  }
+
+  // Gunakan thumbnail YouTube jika default
+  if (isDefault && youtubeId != null) {
+    return 'https://img.youtube.com/vi/$youtubeId/hqdefault.jpg';
+  }
+
+  // Jika sudah URL
+  if (Uri.tryParse(thumbnail)?.hasAbsolutePath == true) {
+    return thumbnail;
+  }
+
+  // Thumbnail biasa dari server
+  return '${AppConstant.baseUrlFoto}$thumbnail';
 }

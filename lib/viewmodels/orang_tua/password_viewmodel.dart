@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:molita_flutter/core/constants/app_constant.dart';
-import 'package:molita_flutter/models/orang_tua/password_update_response.dart';
-import 'dart:convert';
+import 'package:molita_flutter/core/services/passwordService.dart';
 
 class PasswordViewModel extends ChangeNotifier {
+  final PasswordService _passwordService = PasswordService();
+
   bool isLoading = false;
   String? message;
 
@@ -15,29 +14,24 @@ class PasswordViewModel extends ChangeNotifier {
     required String confirmPassword,
   }) async {
     isLoading = true;
+    message = null;
     notifyListeners();
 
-    final response = await http.post(
-      Uri.parse('${AppConstant.baseUrlApi}/orang-tua/ganti-password'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'email': email,
-        'password_lama': passwordLama,
-        'password_baru': passwordBaru,
-        'password_baru_confirmation': confirmPassword,
-      }),
-    );
-
-    isLoading = false;
-
-    if (response.statusCode == 200) {
-      message = PasswordUpdateResponse.fromJson(json.decode(response.body)).message;
-      notifyListeners();
+    try {
+      final result = await _passwordService.gantiPassword(
+        email: email,
+        passwordLama: passwordLama,
+        passwordBaru: passwordBaru,
+        confirmPassword: confirmPassword,
+      );
+      message = result.message;
       return true;
-    } else {
-      message = json.decode(response.body)['message'];
-      notifyListeners();
+    } catch (e) {
+      message = e.toString().replaceFirst('Exception: ', '');
       return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
   }
 }

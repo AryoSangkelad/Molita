@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:molita_flutter/core/services/AuthService.dart';
 import 'package:molita_flutter/models/common/register_model.dart';
 

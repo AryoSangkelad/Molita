@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
-import 'package:molita_flutter/models/common/onboarding_model.dart';
 import 'package:molita_flutter/viewmodels/common/onboarding_viewmodel.dart';
+import 'package:molita_flutter/views/orang_tua/Onboarding/onboarding_widgets/onboarding_item.dart';
 import 'package:provider/provider.dart';
 
 class OnboardingView extends StatelessWidget {
@@ -59,10 +58,7 @@ class OnboardingView extends StatelessWidget {
                         itemCount: list.length,
                         onPageChanged: viewModel.updatePage,
                         itemBuilder: (context, index) {
-                          return _buildOnboardingItem(
-                            list[index],
-                            screenHeight,
-                          );
+                          return buildOnboardingItem(list[index], screenHeight);
                         },
                       ),
                     ),
@@ -144,56 +140,6 @@ class OnboardingView extends StatelessWidget {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildOnboardingItem(OnboardingModel model, double screenHeight) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Lottie animation
-          Container(
-            height: model.animation ? screenHeight * 0.4 : screenHeight * 0.27,
-            child:
-                model.animation
-                    ? Lottie.asset(
-                      'assets/animations/${model.imageAsset}',
-                      fit: BoxFit.contain,
-                    )
-                    : Image.asset(
-                      'assets/images/${model.imageAsset}',
-                      fit: BoxFit.contain,
-                    ),
-          ),
-          SizedBox(height: 40),
-
-          // Title
-          Text(
-            model.title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue[800],
-              height: 1.2,
-            ),
-          ),
-          SizedBox(height: 16),
-
-          // Description
-          Text(
-            model.description,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              color: Colors.grey[700],
-              height: 1.5,
-            ),
-          ),
-        ],
       ),
     );
   }

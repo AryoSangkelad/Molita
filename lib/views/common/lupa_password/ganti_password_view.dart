@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/lupa_password_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-class GantiPasswordScreen extends StatefulWidget {
+class GantiPasswordView extends StatefulWidget {
   final String username;
 
-  const GantiPasswordScreen({Key? key, required this.username})
+  const GantiPasswordView({Key? key, required this.username})
     : super(key: key);
 
   @override
-  State<GantiPasswordScreen> createState() => _GantiPasswordScreenState();
+  State<GantiPasswordView> createState() => _GantiPasswordViewState();
 }
 
-class _GantiPasswordScreenState extends State<GantiPasswordScreen> {
+class _GantiPasswordViewState extends State<GantiPasswordView> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmController = TextEditingController();
   bool isObscure1 = true;
