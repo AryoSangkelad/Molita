@@ -16,15 +16,18 @@ class _GrafikViewState extends State<GrafikView> {
   late PertumbuhanViewModel viewModel;
 
   // Warna yang lebih kontras untuk pertumbuhan berbeda
-  final Color weightColor = const Color(0xFF4361EE); 
-  final Color heightColor = const Color(0xFF4CAF50); 
+  final Color weightColor = const Color(0xFF4361EE);
+  final Color heightColor = const Color(0xFF4CAF50);
   final Color secondaryColor = const Color(0xFF3F37C9);
-
   @override
   void initState() {
     super.initState();
     viewModel = Provider.of<PertumbuhanViewModel>(context, listen: false);
-    viewModel.init(widget.userId);
+
+    // Tunda pemanggilan init sampai build selesai
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.init(widget.userId);
+    });
   }
 
   @override

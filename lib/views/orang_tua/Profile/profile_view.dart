@@ -19,7 +19,7 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   bool _darkMode = false;
-  late Future<void> _orangTuaFuture; // Future untuk menunggu pemuatan data
+  Future<void>? _orangTuaFuture;
 
   final _blueGradient = const LinearGradient(
     colors: [Color(0xFF2196F3), Color(0xFF1976D2)],
@@ -30,13 +30,19 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   void initState() {
     super.initState();
-    final profileViewModel = Provider.of<ProfileViewModel>(
-      context,
-      listen: false,
-    );
 
-    // Inisialisasi Future untuk memuat data
-    _orangTuaFuture = profileViewModel.loadOrangTua(widget.orangTua.idOrangTua);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final profileViewModel = Provider.of<ProfileViewModel>(
+        context,
+        listen: false,
+      );
+
+      setState(() {
+        _orangTuaFuture = profileViewModel.loadOrangTua(
+          widget.orangTua.idOrangTua,
+        );
+      });
+    });
   }
 
   @override
@@ -86,12 +92,11 @@ class _ProfileViewState extends State<ProfileView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error, color: Colors.red, size: 40),
-                  const SizedBox(height: 16),
+                  Icon(Icons.error, color: Colors.red, size: 40),
+                  SizedBox(height: 16),
                   Text('Terjadi kesalahan: ${snapshot.error}'),
                   TextButton(
                     onPressed: () {
-                      // Muat ulang data jika terjadi error
                       setState(() {
                         final profileViewModel = Provider.of<ProfileViewModel>(
                           context,
@@ -102,7 +107,7 @@ class _ProfileViewState extends State<ProfileView> {
                         );
                       });
                     },
-                    child: const Text('Coba Lagi'),
+                    child: Text('Coba Lagi'),
                   ),
                 ],
               ),
@@ -135,7 +140,7 @@ class _ProfileViewState extends State<ProfileView> {
                           child: CircleAvatar(
                             radius: 60,
                             backgroundImage: NetworkImage(
-                              "${AppConstant.baseUrlFoto}${viewModel.orangTua!.img}",
+                              "${AppConstant.baseUrlFoto}${viewModel.orangTua!.img ?? "-"}",
                             ),
                           ),
                         ),
@@ -154,8 +159,9 @@ class _ProfileViewState extends State<ProfileView> {
                           ),
                           child: InkWell(
                             onTap:
-                                () =>
-                                    _pickImage(viewModel.orangTua?.idOrangTua),
+                                () => _pickImage(
+                                  viewModel.orangTua?.idOrangTua ?? "-",
+                                ),
                             child: const Icon(
                               Icons.camera_alt_rounded,
                               size: 24,
