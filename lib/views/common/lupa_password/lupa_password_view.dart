@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/lupa_password_viewmodel.dart';
-import 'package:molita_flutter/views/common/lupa_password/verifikasi_otp_screen.dart';
+import 'package:molita_flutter/views/common/lupa_password/verifikasi_otp_view.dart';
 import 'package:provider/provider.dart';
 
-class LupaPasswordScreen extends StatelessWidget {
-  const LupaPasswordScreen({Key? key}) : super(key: key);
+class LupaPasswordView extends StatelessWidget {
+  const LupaPasswordView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +138,7 @@ class LupaPasswordScreen extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder:
-                                      (_) => VerifikasiOtpScreen(
+                                      (_) => VerifikasiOtpView(
                                         username: username,
                                         email: email,
                                       ),

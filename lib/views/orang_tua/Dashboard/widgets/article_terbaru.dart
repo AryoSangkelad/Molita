@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:molita_flutter/core/constants/app_constant.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
-import 'package:molita_flutter/views/orang_tua/Edukasi/artikel_detail_screen.dart';
+import 'package:molita_flutter/views/orang_tua/Edukasi/artikel_detail_view.dart';
 
 Widget buildArtikelTerbaru(BuildContext context, DashboardViewModel viewModel) {
   final artikelList = viewModel.getArtikelOnly();
@@ -125,7 +125,7 @@ Widget buildArtikelTerbaru(BuildContext context, DashboardViewModel viewModel) {
                                               MaterialPageRoute(
                                                 builder:
                                                     (context) =>
-                                                        ArtikelDetailScreen(
+                                                        ArtikelDetailView(
                                                           artikel: item,
                                                         ),
                                               ),

@@ -36,7 +36,7 @@ class OnboardingViewModel extends ChangeNotifier {
     OnboardingModel(
       title: 'Desain Aplikasi yang Modern',
       description: 'Aplikasi yang mudah dimengerti dan digunakan',
-      imageAsset: 'slide2.json',
+      imageAsset: 'anim_application.json',
       animation: true,
     ),
   ];

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:molita_flutter/core/constants/app_constant.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
-import 'package:molita_flutter/views/orang_tua/Edukasi/video_detail_screen.dart';
+import 'package:molita_flutter/views/orang_tua/Edukasi/video_detail_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Widget buildVideoTerbaru(DashboardViewModel viewModel) {
@@ -160,7 +160,7 @@ class _VideoTerbaruSliderState extends State<_VideoTerbaruSlider> {
                                       MaterialPageRoute(
                                         builder:
                                             (context) =>
-                                                VideoDetailScreen(video: info),
+                                                VideoDetailView(video: info),
                                       ),
                                     );
                                   }

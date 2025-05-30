@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/chatbot_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'widgets/build_message_widget.dart';
+import 'widgets/message.dart';
 
 class ChatBotView extends StatelessWidget {
   const ChatBotView({super.key});

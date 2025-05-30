@@ -4,11 +4,11 @@ import 'package:molita_flutter/models/orang_tua/jenis_posyandu_model.dart';
 import 'package:molita_flutter/models/orang_tua/orang_tua_model.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/edukasi_viewmodel.dart';
-import 'package:molita_flutter/views/orang_tua/Dashboard/widgets/build_article_terbaru_widget.dart';
-import 'package:molita_flutter/views/orang_tua/Dashboard/widgets/build_header_widget.dart';
-import 'package:molita_flutter/views/orang_tua/Dashboard/widgets/video_terbaru_widget.dart';
-import 'package:molita_flutter/views/orang_tua/Dashboard/widgets/build_jadwal_posyandu_widget.dart';
-import 'package:molita_flutter/views/orang_tua/Dashboard/widgets/data_anak_widget.dart';
+import 'package:molita_flutter/views/orang_tua/Dashboard/widgets/article_terbaru.dart';
+import 'package:molita_flutter/views/orang_tua/Dashboard/widgets/header.dart';
+import 'package:molita_flutter/views/orang_tua/Dashboard/widgets/video_terbaru.dart';
+import 'package:molita_flutter/views/orang_tua/Dashboard/widgets/jadwal_posyandu.dart';
+import 'package:molita_flutter/views/orang_tua/Dashboard/widgets/data_anak.dart';
 import 'package:provider/provider.dart';
 
 class DashboardView extends StatefulWidget {
@@ -54,9 +54,8 @@ class _DashboardViewState extends State<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<DashboardViewModel>();
+    context.watch<DashboardViewModel>();
     final screenHeight = MediaQuery.of(context).size.height;
-    final topPadding = MediaQuery.of(context).padding.top;
 
     final dashboardViewModel = Provider.of<DashboardViewModel>(context);
 

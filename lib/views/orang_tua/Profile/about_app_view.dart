@@ -77,7 +77,7 @@ class AboutAppView extends StatelessWidget {
             GestureDetector(
               onTap: _launchWebsite,
               child: Text(
-                'Kunjungi website resmi kami di: https://molita.org',
+                'Kunjungi website resmi kami di: https://molita.org/v2/',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: theme.colorScheme.primary,
                   decoration: TextDecoration.underline,
