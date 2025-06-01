@@ -20,7 +20,7 @@ Widget buildArtikelTerbaru(BuildContext context, DashboardViewModel viewModel) {
         ),
         SizedBox(height: 12),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.40,
+          height: MediaQuery.of(context).size.height * 0.41,
           child:
               artikelList.isEmpty
                   ? Center(child: Text("Belum ada artikel."))
