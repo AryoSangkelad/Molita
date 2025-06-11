@@ -59,17 +59,23 @@ class _GrafikViewState extends State<GrafikView> {
           }
           return Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildAnakDropdown(model, weightColor),
-                const SizedBox(height: 24),
-                buildGrafikTabs(model, weightColor),
-                const SizedBox(height: 24),
-                Expanded(child: buildGrafik(model, weightColor, heightColor)),
-                const SizedBox(height: 24),
-                _buildDeskripsi(model),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildAnakDropdown(model, weightColor),
+                  const SizedBox(height: 24),
+                  buildGrafikTabs(model, weightColor),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    height:
+                        300, // Batas tinggi grafik, sesuaikan sesuai kebutuhan
+                    child: buildGrafik(model, weightColor, heightColor),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildDeskripsi(model),
+                ],
+              ),
             ),
           );
         },
@@ -82,28 +88,28 @@ class _GrafikViewState extends State<GrafikView> {
     if (data.isEmpty) return const SizedBox();
 
     String title = '';
-    String desc = '';
     IconData icon = Icons.insights_rounded;
 
     switch (model.selectedGrafik) {
       case 'Semua':
         title = 'Pertumbuhan Komprehensif';
-        desc =
-            'Perkembangan berat badan dan tinggi badan ${model.selectedAnak?.nama} menunjukkan tren positif. Grafik ini membantu memantau keseimbangan antara pertumbuhan fisik dan perkembangan nutrisi.';
         icon = Icons.bar_chart_rounded;
         break;
       case 'Berat Badan':
         title = 'Perkembangan Berat Badan';
-        desc =
-            'Pola pertumbuhan berat badan yang stabil menunjukkan asupan nutrisi yang baik. Pertahankan pola makan seimbang untuk menjaga tren positif ini.';
         icon = Icons.monitor_weight_rounded;
         break;
       default:
         title = 'Perkembangan Tinggi Badan';
-        desc =
-            'Peningkatan tinggi badan yang konsisten mencerminkan perkembangan tulang dan otot yang sehat. Pastikan aktivitas fisik yang cukup dan istirahat teratur.';
         icon = Icons.height_rounded;
     }
+
+    String desc =
+        model.isLoadingDeskripsi
+            ? 'Sedang membuat deskripsi otomatis...'
+            : (model.deskripsiGrafik.isNotEmpty
+                ? model.deskripsiGrafik
+                : 'Belum ada deskripsi tersedia.');
 
     return Container(
       decoration: BoxDecoration(

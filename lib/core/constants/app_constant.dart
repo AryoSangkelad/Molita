@@ -20,5 +20,5 @@ class AppConstant {
   // API KEY GET AI
   // ignore: constant_identifier_names
   static const String ApiKeyAI =
-      "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";
+      "";
 }

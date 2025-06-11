@@ -1,5 +1,6 @@
 
-// Pertumbuhan Model
+import 'package:molita_flutter/models/orang_tua/status_gizi_model.dart';
+
 class Pertumbuhan {
   final String id;
   final String idAnak;
@@ -7,6 +8,7 @@ class Pertumbuhan {
   final double beratBadan;
   final double tinggiBadan;
   final double lingkarKepala;
+  final StatusGizi? statusGizi;
 
   Pertumbuhan({
     required this.id,
@@ -15,6 +17,7 @@ class Pertumbuhan {
     required this.beratBadan,
     required this.tinggiBadan,
     required this.lingkarKepala,
+    this.statusGizi,
   });
 
   factory Pertumbuhan.fromJson(Map<String, dynamic> json) {
@@ -25,6 +28,9 @@ class Pertumbuhan {
       beratBadan: double.tryParse(json['berat_badan'].toString()) ?? 0.0,
       tinggiBadan: double.tryParse(json['tinggi_badan'].toString()) ?? 0.0,
       lingkarKepala: double.tryParse(json['lingkar_kepala'].toString()) ?? 0.0,
+      statusGizi: json['status_gizi'] != null
+          ? StatusGizi.fromJson(json['status_gizi'])
+          : null,
     );
   }
 }

@@ -58,36 +58,6 @@ class _PenjadwalanViewState extends State<PenjadwalanView> {
           ),
         ),
         centerTitle: false,
-        // bottom: PreferredSize(
-        //   preferredSize: Size.fromHeight(60),
-        //   child: Padding(
-        //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        //     child: Container(
-        //       decoration: BoxDecoration(
-        //         color: Colors.grey[200],
-        //         borderRadius: BorderRadius.circular(12),
-        //       ),
-        //       child: Padding(
-        //         padding: const EdgeInsets.symmetric(horizontal: 12),
-        //         child: Row(
-        //           children: [
-        //             Icon(Icons.search, color: Colors.grey[600]),
-        //             SizedBox(width: 8),
-        //             Expanded(
-        //               child: TextField(
-        //                 decoration: InputDecoration(
-        //                   hintText: 'Cari Jadwal...',
-        //                   border: InputBorder.none,
-        //                   hintStyle: TextStyle(color: Colors.grey[600]),
-        //                 ),
-        //               ),
-        //             ),
-        //           ],
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
