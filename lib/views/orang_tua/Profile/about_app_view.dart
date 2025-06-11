@@ -20,7 +20,7 @@ class AboutAppView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Pengaduan"),
+        title: const Text("Tentang Aplikasi"),
         backgroundColor: Colors.blue[800],
         foregroundColor: Colors.white,
       ),

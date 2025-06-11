@@ -4,8 +4,8 @@ import 'package:molita_flutter/views/common/Register/register_view.dart';
 import 'package:molita_flutter/views/common/lupa_password/lupa_password_view.dart';
 import 'package:molita_flutter/views/orang_tua/ChatBot/chat_bot_view.dart';
 import 'package:molita_flutter/views/orang_tua/Menu/menu_view.dart';
-import 'package:molita_flutter/views/orang_tua/Onboarding/onboarding_view.dart';
-import 'package:molita_flutter/views/orang_tua/Onboarding/splash_screen_view.dart';
+import 'package:molita_flutter/views/common/Onboarding/onboarding_view.dart';
+import 'package:molita_flutter/views/common/Onboarding/splash_screen_view.dart';
 
 class AppRoutes {
   static Map<String, WidgetBuilder> routes = {

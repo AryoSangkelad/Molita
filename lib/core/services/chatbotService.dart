@@ -48,4 +48,75 @@ Jadi, ada yang bisa Molita bantu hari ini?
       );
     }
   }
+
+  Future<String> getGrafikDeskripsi({
+    required String jenisGrafik,
+    required String statusBBU,
+    required String zscoreBBU,
+    required String statusTBU,
+    required String zscoreTBU,
+    required String statusBBTB,
+    required String zscoreBBTB,
+  }) async {
+    final headers = {
+      'Authorization': _apiKey,
+      'Content-Type': 'application/json',
+    };
+
+    String prompt = '';
+    switch (jenisGrafik) {
+      case 'Berat Badan':
+        prompt = '''
+Hai Molita, bantu buatkan deskripsi singkat dan ramah tentang grafik **Berat Badan menurut Umur (BB/U)** anak berikut ini (maksimal 100 kata):
+- Status Gizi: $statusBBU
+- Z-score: $zscoreBBU
+
+Gunakan gaya bahasa yang mudah dipahami orang tua dan beri saran sederhana jika perlu.
+''';
+        break;
+      case 'Tinggi Badan':
+        prompt = '''
+Hai Molita, bantu buatkan deskripsi singkat dan ramah tentang grafik **Tinggi Badan menurut Umur (TB/U)** anak berikut ini (maksimal 100 kata):
+- Status Gizi: $statusTBU
+- Z-score: $zscoreTBU
+
+Gunakan gaya bahasa yang mudah dipahami orang tua dan beri saran sederhana jika perlu.
+''';
+        break;
+      case 'Semua':
+      default:
+        prompt = '''
+Hai Molita, bantu buatkan deskripsi singkat dan ramah tentang grafik pertumbuhan anak secara keseluruhan berikut ini (maksimal 100 kata):
+- BB/U: $statusBBU (Z-score: $zscoreBBU)
+- TB/U: $statusTBU (Z-score: $zscoreTBU)
+- BB/TB: $statusBBTB (Z-score: $zscoreBBTB)
+
+Gunakan gaya bahasa yang mudah dipahami orang tua dan beri saran sederhana jika perlu.
+''';
+        break;
+    }
+
+    final body = jsonEncode({
+      "model": "mistralai/mistral-7b-instruct:free",
+      "messages": [
+        {"role": "system", "content": _systemMessage},
+        {"role": "user", "content": prompt},
+      ],
+    });
+
+    final response = await http.post(
+      Uri.parse(_url),
+      headers: headers,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['choices'][0]['message']['content'];
+    } else {
+      throw Exception(
+        'Gagal mendapatkan deskripsi grafik (${response.statusCode})',
+      );
+    }
+  }
 }

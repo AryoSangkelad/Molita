@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:molita_flutter/core/constants/colors_constant.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/password_viewmodel.dart';
 import 'package:molita_flutter/views/orang_tua/Profile/change_password_widgets/password_field.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,7 @@ class _KeamananAkunViewState extends State<KeamananAkunView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Keamanan Akun"),
-        backgroundColor: theme.primaryColor,
+        backgroundColor: ColorsConstant.brightBlue,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -46,7 +47,7 @@ class _KeamananAkunViewState extends State<KeamananAkunView> {
                           'Ganti Password',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: theme.primaryColorDark,
+                            color: ColorsConstant.brightBlue,
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -108,7 +109,7 @@ class _KeamananAkunViewState extends State<KeamananAkunView> {
                             child: ElevatedButton(
                               onPressed: _submitForm,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: theme.primaryColor,
+                                backgroundColor: ColorsConstant.brightBlue,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 16,
                                 ),

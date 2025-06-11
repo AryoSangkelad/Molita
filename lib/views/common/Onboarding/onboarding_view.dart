@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:molita_flutter/viewmodels/common/onboarding_viewmodel.dart';
-import 'package:molita_flutter/views/orang_tua/Onboarding/onboarding_widgets/onboarding_item.dart';
+import 'package:molita_flutter/views/common/Onboarding/onboarding_widgets/onboarding_item.dart';
 import 'package:provider/provider.dart';
 
 class OnboardingView extends StatelessWidget {

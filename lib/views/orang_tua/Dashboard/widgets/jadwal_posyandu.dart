@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart' as Htmls;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -355,14 +356,27 @@ Widget _buildModernDetailRow(
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: colors.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              // Misalnya: gunakan boolean isHtml untuk menentukan apakah value adalah HTML
+              (icon == Icons.note)
+                  ? Htmls.Html(
+                    data: "value",
+                    style: {
+                      "body": Htmls.Style(
+                        fontSize: Htmls.FontSize(16),
+                        color: Colors.grey[800],
+                        margin: Htmls.Margins.all(0),
+                        padding: Htmls.HtmlPaddings.all(0),
+                      ),
+                    },
+                  )
+                  : Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: colors.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
             ],
           ),
         ),

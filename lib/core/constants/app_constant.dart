@@ -18,5 +18,7 @@ class AppConstant {
   static const String baseUrlApi = "https://molita.org/v2/api"; // Production
 
   // API KEY GET AI
-  static const String ApiKeyAI = "";
+  // ignore: constant_identifier_names
+  static const String ApiKeyAI =
+      "";
 }

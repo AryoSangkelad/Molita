@@ -20,7 +20,7 @@ Widget buildArtikelTerbaru(BuildContext context, DashboardViewModel viewModel) {
         ),
         SizedBox(height: 12),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.40,
+          height: MediaQuery.of(context).size.height * 0.41,
           child:
               artikelList.isEmpty
                   ? Center(child: Text("Belum ada artikel."))
@@ -98,7 +98,21 @@ Widget buildArtikelTerbaru(BuildContext context, DashboardViewModel viewModel) {
                                     ),
                                     SizedBox(height: 6),
                                     Text(
-                                      '${item.konten.replaceAll(RegExp(r'<[^>]*>'), '').replaceAll('\n', ' ').trim().substring(0, item.konten.length > 60 ? 60 : item.konten.length)}...',
+                                      () {
+                                        final cleanKonten =
+                                            item.konten
+                                                .replaceAll(
+                                                  RegExp(r'<[^>]*>'),
+                                                  '',
+                                                )
+                                                .replaceAll('\n', ' ')
+                                                .trim();
+                                        final preview =
+                                            cleanKonten.length > 60
+                                                ? cleanKonten.substring(0, 60)
+                                                : cleanKonten;
+                                        return '$preview...';
+                                      }(),
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.black87,
@@ -131,16 +145,16 @@ Widget buildArtikelTerbaru(BuildContext context, DashboardViewModel viewModel) {
                                               ),
                                             );
                                           },
+                                          style: TextButton.styleFrom(
+                                            minimumSize: Size(0, 0),
+                                            padding: EdgeInsets.zero,
+                                          ),
                                           child: Text(
                                             "Baca",
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: Colors.blue,
                                             ),
-                                          ),
-                                          style: TextButton.styleFrom(
-                                            minimumSize: Size(0, 0),
-                                            padding: EdgeInsets.zero,
                                           ),
                                         ),
                                       ],

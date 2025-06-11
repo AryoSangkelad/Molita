@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:molita_flutter/models/orang_tua/jadwal_imunisasi.dart';
 import 'package:molita_flutter/models/orang_tua/jadwal_posyandu.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/penjadwalan_viewmodal.dart';
@@ -113,7 +114,19 @@ class DetailJadwalBottomSheet extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(value, style: const TextStyle(fontSize: 15)),
+                (icon == Icons.note)
+                    ? Html(
+                      data: value,
+                      style: {
+                        "body": Style(
+                          fontSize: FontSize(16),
+                          color: Colors.grey[800],
+                          margin: Margins.all(0),
+                          padding: HtmlPaddings.all(0),
+                        ),
+                      },
+                    )
+                    : Text(value, style: TextStyle(fontSize: 15)),
               ],
             ),
           ),

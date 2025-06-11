@@ -79,7 +79,7 @@ class _VideoTerbaruSliderState extends State<_VideoTerbaruSlider> {
           const Center(child: Text("Belum ada video."))
         else
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.26,
+            height: MediaQuery.of(context).size.height * 0.28,
             child: PageView.builder(
               controller: _controller,
               itemCount: videoList.length,
