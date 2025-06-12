@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:molita_flutter/core/constants/app_constant.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
 import 'package:molita_flutter/views/orang_tua/Edukasi/video_detail_view.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 Widget buildVideoTerbaru(DashboardViewModel viewModel) {
   return _VideoTerbaruSlider(viewModel: viewModel);
@@ -12,7 +11,7 @@ Widget buildVideoTerbaru(DashboardViewModel viewModel) {
 class _VideoTerbaruSlider extends StatefulWidget {
   final DashboardViewModel viewModel;
 
-  const _VideoTerbaruSlider({super.key, required this.viewModel});
+  const _VideoTerbaruSlider({required this.viewModel});
 
   @override
   State<_VideoTerbaruSlider> createState() => _VideoTerbaruSliderState();
@@ -50,16 +49,6 @@ class _VideoTerbaruSliderState extends State<_VideoTerbaruSlider> {
     super.dispose();
   }
 
-  Future<void> _launchURL(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Tidak bisa membuka link: $url')));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

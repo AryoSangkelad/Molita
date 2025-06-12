@@ -71,12 +71,12 @@ class PengaduanView extends StatefulWidget {
 }
 
 class _PengaduanViewState extends State<PengaduanView> {
-  final _formKey = GlobalKey<FormState>();
+  // Pindahkan variabel state ke sini agar tetap hidup
+  // bahkan ketika modal ditutup
   String judul = '';
   String deskripsi = '';
   int? kategoriId;
   File? lampiran;
-  final picker = ImagePicker();
 
   @override
   void initState() {
@@ -90,19 +90,20 @@ class _PengaduanViewState extends State<PengaduanView> {
     });
   }
 
-  Future<void> _pickImage() async {
+  Future<void> _pickImage(StateSetter setStateModal) async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
-      setState(() {
+      setStateModal(() {
         lampiran = File(picked.path);
       });
     }
   }
 
   void _showFormModal(BuildContext context) {
-    final kategoriVM = Provider.of<KategoriViewModel>(context, listen: false);
-    final pengaduanVM = Provider.of<PengaduanViewModel>(context, listen: false);
+    // Reset state form saat modal dibuka, jika ingin memulai dari awal
+    // Namun, jika ingin mempertahankan nilai, jangan reset di sini.
+    // Untuk kasus ini, kita ingin mempertahankan nilai.
 
     showModalBottomSheet(
       context: context,
@@ -110,274 +111,308 @@ class _PengaduanViewState extends State<PengaduanView> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
-      builder:
-          (_) => Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              top: 24,
-              left: 16,
-              right: 16,
-            ),
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(2),
+      builder: (_) {
+        final kategoriVM = Provider.of<KategoriViewModel>(
+          context,
+          listen: false,
+        );
+        final pengaduanVM = Provider.of<PengaduanViewModel>(
+          context,
+          listen: false,
+        );
+        final _formKey =
+            GlobalKey<FormState>(); // FormKey juga di dalam builder
+
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setStateModal) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                top: 24,
+                left: 16,
+                right: 16,
+              ),
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(2),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Buat Pengaduan Baru',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.blue[900],
-                      ),
-                    ),
-                    SizedBox(height: 24),
-                    buildInputField(
-                      label: 'Judul Pengaduan',
-                      hint: 'Masukkan judul pengaduan',
-                      validator:
-                          (value) =>
-                              value!.isEmpty ? 'Judul harus diisi' : null,
-                      onSaved: (value) => judul = value!,
-                    ),
-                    SizedBox(height: 16),
-                    buildInputField(
-                      label: 'Deskripsi',
-                      hint: 'Jelaskan pengaduan Anda secara detail',
-                      validator:
-                          (value) =>
-                              value!.isEmpty ? 'Deskripsi harus diisi' : null,
-                      onSaved: (value) => deskripsi = value!,
-                      maxLines: 4,
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Kategori',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[50],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: DropdownButtonFormField<int>(
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
+                      SizedBox(height: 16),
+                      Text(
+                        'Buat Pengaduan Baru',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.blue[900],
                         ),
-                        value: kategoriId,
-                        items:
-                            kategoriVM.kategoriList
-                                .map(
-                                  (kategori) => DropdownMenuItem<int>(
-                                    value: kategori.id,
-                                    child: Text(
-                                      kategori.nama,
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (val) {
-                          setState(() {
-                            kategoriId = val;
-                          });
-                        },
+                      ),
+                      SizedBox(height: 24),
+                      buildInputField(
+                        label: 'Judul Pengaduan',
+                        hint: 'Masukkan judul pengaduan',
+                        initialValue: judul, 
                         validator:
-                            (value) => value == null ? 'Pilih kategori' : null,
-                        icon: Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.grey[600],
-                        ),
-                        style: TextStyle(fontSize: 14, color: Colors.grey[800]),
-                        hint: Text(
-                          'Pilih Kategori',
-                          style: TextStyle(color: Colors.grey[500]),
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                        isExpanded: true,
+                            (value) =>
+                                value!.isEmpty ? 'Judul harus diisi' : null,
+                        onSaved: (value) => judul = value!,
                       ),
-                    ),
-                    SizedBox(height: 24),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Lampiran',
+                      SizedBox(height: 16),
+                      buildInputField(
+                        label: 'Deskripsi',
+                        hint: 'Jelaskan pengaduan Anda secara detail',
+                        initialValue: deskripsi, // Tambahkan initialValue
+                        validator:
+                            (value) =>
+                                value!.isEmpty ? 'Deskripsi harus diisi' : null,
+                        onSaved: (value) => deskripsi = value!,
+                        maxLines: 4,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Kategori',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        child: DropdownButtonFormField<int>(
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                          ),
+                          value: kategoriId,
+                          items:
+                              kategoriVM.kategoriList
+                                  .map(
+                                    (kategori) => DropdownMenuItem<int>(
+                                      value: kategori.id,
+                                      child: Text(
+                                        kategori.nama,
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (val) {
+                            setStateModal(() {
+                              // Gunakan setStateModal
+                              kategoriId = val;
+                            });
+                          },
+                          validator:
+                              (value) =>
+                                  value == null ? 'Pilih kategori' : null,
+                          icon: Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.grey[600],
+                          ),
                           style: TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[700],
+                            color: Colors.grey[800],
                           ),
+                          hint: Text(
+                            'Pilih Kategori',
+                            style: TextStyle(color: Colors.grey[500]),
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                          isExpanded: true,
                         ),
-                        const SizedBox(height: 8),
-
-                        // Hanya tampil jika lampiran belum ada
-                        if (lampiran == null)
-                          InkWell(
-                            onTap: _pickImage,
-                            borderRadius: BorderRadius.circular(10),
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[50],
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: Colors.grey[300]!,
-                                  width: 1,
-                                ),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.attach_file,
-                                    color: Colors.blue[800],
-                                    size: 28,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Tambahkan Foto',
-                                    style: TextStyle(
-                                      color: Colors.blue[800],
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                      ),
+                      SizedBox(height: 24),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Lampiran',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[700],
                             ),
                           ),
+                          const SizedBox(height: 8),
 
-                        // Jika lampiran ada, tampilkan preview dan tombol hapus
-                        if (lampiran != null) ...[
-                          const SizedBox(height: 12),
-                          Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.file(
-                                  lampiran!,
-                                  height: 150,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
+                          // Hanya tampil jika lampiran belum ada
+                          if (lampiran == null)
+                            InkWell(
+                              onTap:
+                                  () => _pickImage(
+                                    setStateModal,
+                                  ), // Gunakan setStateModal
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[50],
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: Colors.grey[300]!,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.attach_file,
+                                      color: Colors.blue[800],
+                                      size: 28,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Tambahkan Foto',
+                                      style: TextStyle(
+                                        color: Colors.blue[800],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Positioned(
-                                top: 4,
-                                right: 4,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.black45,
-                                    shape: BoxShape.circle,
+                            ),
+
+                          // Jika lampiran ada, tampilkan preview dan tombol hapus
+                          if (lampiran != null) ...[
+                            const SizedBox(height: 12),
+                            Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.file(
+                                    lampiran!,
+                                    height: 150,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
                                   ),
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.close,
+                                ),
+                                Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black45,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: IconButton(
+                                      icon: const Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () {
+                                        setStateModal(() {
+                                          // Gunakan setStateModal
+                                          lampiran = null;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ],
+                      ),
+                      SizedBox(height: 32),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed:
+                              pengaduanVM.isLoading
+                                  ? null
+                                  : () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      _formKey.currentState!.save();
+                                      final pengaduan = Pengaduan(
+                                        idOrangTua: widget.idOrangTua,
+                                        judul: judul,
+                                        deskripsi: deskripsi,
+                                        kategoriId: kategoriId!,
+                                      );
+                                      final success = await pengaduanVM
+                                          .submitPengaduan(
+                                            pengaduan,
+                                            lampiran: lampiran,
+                                          );
+                                      if (success) {
+                                        Navigator.pop(context);
+                                        // Reset state setelah pengiriman sukses
+                                        setState(() {
+                                          judul = '';
+                                          deskripsi = '';
+                                          kategoriId = null;
+                                          lampiran = null;
+                                        });
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Pengaduan berhasil dikirim!',
+                                            ),
+                                            backgroundColor: Colors.green,
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue[800],
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child:
+                              pengaduanVM.isLoading
+                                  ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
                                       color: Colors.white,
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        lampiran = null;
-                                      });
-                                    },
+                                  )
+                                  : Text(
+                                    'Kirim Pengaduan',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ],
-                    ),
-                    SizedBox(height: 32),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed:
-                            pengaduanVM.isLoading
-                                ? null
-                                : () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    _formKey.currentState!.save();
-                                    final pengaduan = Pengaduan(
-                                      idOrangTua: widget.idOrangTua,
-                                      judul: judul,
-                                      deskripsi: deskripsi,
-                                      kategoriId: kategoriId!,
-                                    );
-                                    final success = await pengaduanVM
-                                        .submitPengaduan(
-                                          pengaduan,
-                                          lampiran: lampiran,
-                                        );
-                                    if (success) {
-                                      Navigator.pop(context);
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Pengaduan berhasil dikirim!',
-                                          ),
-                                          backgroundColor: Colors.green,
-                                        ),
-                                      );
-                                    }
-                                  }
-                                },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue[800],
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
                         ),
-                        child:
-                            pengaduanVM.isLoading
-                                ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                                : Text(
-                                  'Kirim Pengaduan',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                                ),
                       ),
-                    ),
-                    SizedBox(height: 16),
-                  ],
+                      SizedBox(height: 16),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
+        );
+      },
     );
   }
 

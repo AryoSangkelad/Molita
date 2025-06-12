@@ -3,7 +3,6 @@ import 'package:molita_flutter/models/orang_tua/artikel_edukasi_model.dart';
 import 'package:molita_flutter/models/orang_tua/video_edukasi_model.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/edukasi_viewmodel.dart';
 import 'package:molita_flutter/views/orang_tua/Edukasi/artikel_detail_view.dart';
-import 'package:molita_flutter/views/orang_tua/Edukasi/edukasi_view.dart';
 import 'package:molita_flutter/views/orang_tua/Edukasi/edukasi_widgets/edukasi_card.dart';
 import 'package:molita_flutter/views/orang_tua/Edukasi/video_detail_view.dart';
 

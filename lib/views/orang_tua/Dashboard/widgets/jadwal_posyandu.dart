@@ -35,7 +35,7 @@ Widget buildJadwalPosyandu(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    jenisPosyandu.pos ?? '-',
+                    jenisPosyandu.pos,
                     style: textTheme.titleMedium?.copyWith(
                       color: primaryColor,
                       fontWeight: FontWeight.bold,
@@ -48,7 +48,7 @@ Widget buildJadwalPosyandu(
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          jenisPosyandu.alamat ?? '-',
+                          jenisPosyandu.alamat,
                           style: textTheme.bodyMedium?.copyWith(
                             fontStyle: FontStyle.italic,
                             color: Colors.grey[600],
@@ -274,7 +274,7 @@ class _PosyanduDetailContentState extends State<_PosyanduDetailContent> {
                     context,
                     icon: Icons.location_on,
                     title: 'Alamat',
-                    value: widget.jenisPosyandu.alamat ?? '-',
+                    value: widget.jenisPosyandu.alamat,
                   ),
                   _buildModernDetailRow(
                     context,

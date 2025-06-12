@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/dashboard_viewmodel.dart';
 import 'package:molita_flutter/viewmodels/orang_tua/detail_anak_viewmodel.dart';
 import 'package:molita_flutter/views/orang_tua/Anak/detail_anak_view.dart';
-import 'package:molita_flutter/views/orang_tua/Dashboard/widgets/chip.dart';
 import 'package:provider/provider.dart';
 
 Widget buildDataAnak(BuildContext context, DashboardViewModel viewModel) {
