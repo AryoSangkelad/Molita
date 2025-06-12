@@ -101,12 +101,12 @@ class PertumbuhanViewModel extends ChangeNotifier {
       final chatbotService = ChatBotService();
       final response = await chatbotService.getGrafikDeskripsi(
         jenisGrafik: selectedGrafik,
-        statusBBU: status.statusBBU ?? '-',
-        zscoreBBU: status.zscoreBBU?.toStringAsFixed(2) ?? '0.00',
-        statusTBU: status.statusTBU ?? '-',
-        zscoreTBU: status.zscoreTBU?.toStringAsFixed(2) ?? '0.00',
-        statusBBTB: status.statusBBTB ?? '-',
-        zscoreBBTB: status.zscoreBBTB?.toStringAsFixed(2) ?? '0.00',
+        statusBBU: status.statusBBU,
+        zscoreBBU: status.zscoreBBU.toStringAsFixed(2),
+        statusTBU: status.statusTBU,
+        zscoreTBU: status.zscoreTBU.toStringAsFixed(2),
+        statusBBTB: status.statusBBTB,
+        zscoreBBTB: status.zscoreBBTB.toStringAsFixed(2),
       );
 
       deskripsiGrafik = response.trim();

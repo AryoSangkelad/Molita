@@ -23,7 +23,6 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  bool _darkMode = false;
   Future<void>? _orangTuaFuture;
 
   final _blueGradient = const LinearGradient(

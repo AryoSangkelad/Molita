@@ -21,7 +21,6 @@ class _GantiPasswordViewState extends State<GantiPasswordView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<LupaPasswordViewModel>(context);
-    const Color primaryColor = Color(0xFF00A0D1);
 
     return Scaffold(
       backgroundColor: Colors.white,

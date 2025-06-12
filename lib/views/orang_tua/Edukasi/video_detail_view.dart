@@ -17,7 +17,6 @@ class VideoDetailView extends StatefulWidget {
 class _VideoDetailViewState extends State<VideoDetailView> {
   late YoutubePlayerController _youtubeController;
   bool _isVideoReady = false;
-  double _appBarHeight = 100;
 
   @override
   void initState() {
